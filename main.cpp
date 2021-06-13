@@ -1,9 +1,9 @@
 
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <vector>
+# include <iostream>
+# include <cstdio>
+# include <cstdlib>
+# include <string>
+# include <vector>
 
 using namespace std ;
 
@@ -52,157 +52,157 @@ typedef vector<S_Expression> * SExpressionVctPtr ;
 class Token {
     
 public:
-    TokenType mTokenType ;
-    StringPtr mToken ;
-    int mLine ;
-    int mColumn ;
-    TokenPtr mNext ;
+  TokenType mTokenType ;
+  StringPtr mToken ;
+  int mLine ;
+  int mColumn ;
+  TokenPtr mNext ;
     
-    Token() { // Constructor
-        mTokenType = DEFAULTTOKEN ;
-        mToken = new string ;
-        mToken->clear() ;
-        mLine = -1 ;
-        mColumn = -1 ;
-        mNext = NULL ;
-    } // Token()
+  Token() { // Constructor
+    mTokenType = DEFAULTTOKEN ;
+    mToken = new string ;
+    mToken->clear() ;
+    mLine = -1 ;
+    mColumn = -1 ;
+    mNext = NULL ;
+  } // Token()
     
 } ; //  class Token
 
 class S_Expression {
     
 public:
-    TokenPtr mTokenString ;
-    StringPtr mCompleteSExp ;
+  TokenPtr mTokenString ;
+  StringPtr mCompleteSExp ;
     
-    S_Expression() { // Constructor
-        mTokenString = NULL ;
-        mCompleteSExp = new string ;
-        mCompleteSExp->clear() ;
+  S_Expression() { // Constructor
+    mTokenString = NULL ;
+    mCompleteSExp = new string ;
+    mCompleteSExp->clear() ;
         
-        return ;
-    } // S_Expression()
+    return ;
+  } // S_Expression()
     
 } ; // class S_Expression
 
 class Error {
     
 public:
-    ErrorType mErrorType ;
+  ErrorType mErrorType ;
     
-    Error() { // Constructor
-        mErrorType = DEFAULTERROR ;
+  Error() { // Constructor
+    mErrorType = DEFAULTERROR ;
         
-        return ;
-    } // Error()
+    return ;
+  } // Error()
     
-    Error( ErrorType in ) { // Constructor with parameter
-        mErrorType = in ;
+  Error( ErrorType in ) { // Constructor with parameter
+    mErrorType = in ;
         
-        return ;
-    } // Error()
+    return ;
+  } // Error()
     
 } ; // class Error
 
 class Scanner {
-    StringPtr mLoadedLine ;
-    ErrorVctPtr mErrorVct ;
-    int mLine ;
-    int mColumn ;
+  StringPtr mLoadedLine ;
+  ErrorVctPtr mErrorVct ;
+  int mLine ;
+  int mColumn ;
 public:
-    Scanner() { // Constructor
-        mLoadedLine = new string ;
-        mLoadedLine->clear() ;
-        mErrorVct = new vector<Error> ;
-        mErrorVct->clear() ;
-        mLine = 0 ;
-        mColumn = 0 ;
+  Scanner() { // Constructor
+    mLoadedLine = new string ;
+    mLoadedLine->clear() ;
+    mErrorVct = new vector<Error> ;
+    mErrorVct->clear() ;
+    mLine = 0 ;
+    mColumn = 0 ;
         
-        return ;
-    } // Scanner()
+    return ;
+  } // Scanner()
     
-    // A function which has to read in a bunch of Token until them can
-    // be combined to a S-Expression or there are errors.
-    // get a line per times.
-    bool ReadSExp( S_Expression & sExp, bool hasEof ) {
+  // A function which has to read in a bunch of Token until them can
+  // be combined to a S-Expression or there are errors.
+  // get a line per times.
+  bool ReadSExp( S_Expression & sExp, bool hasEof ) {
         
-        return true ;
-    } // ResdSExp()
+    return true ;
+  } // ResdSExp()
     
-    // A function which has to get a Token and return a TokenPtr that
-    // point to a Token contain a string of this Token and its line and column.
-    bool GetToken( TokenPtr & token ) {
+  // A function which has to get a Token and return a TokenPtr that
+  // point to a Token contain a string of this Token and its line and column.
+  bool GetToken( TokenPtr & token ) {
         
         
-        return true ;
-    } // GetToken()
+    return true ;
+  } // GetToken()
     
-    StringPtr GetLine() {
-        StringPtr lineIn = new string ;
-        char temp ;
+  StringPtr GetLine() {
+    StringPtr lineIn = new string ;
+    char temp ;
         
-        temp = cin.get() ;
-        while( temp != '\n' ) {
-            lineIn->push_back( temp ) ;
-            temp = cin.get() ;
-        } // while
-        mLine++ ;
+    temp = cin.get() ;
+    while( temp != '\n' ) {
+      lineIn->push_back( temp ) ;
+      temp = cin.get() ;
+    } // while
+    mLine++ ;
         
-        return lineIn ;
-    } // GetLine()
+    return lineIn ;
+  } // GetLine()
     
-    void PrintError() {
+  void PrintError() {
         
-        return ;
-    } // PrintError()
+    return ;
+  } // PrintError()
     
 } ; // class Scanner
 
 class Parser {
-    ErrorVctPtr mErrorVct ;
+  ErrorVctPtr mErrorVct ;
 public:
-    Parser() { // Constructor
-        mErrorVct = new vector<Error> ;
-        mErrorVct->clear() ;
+  Parser() { // Constructor
+    mErrorVct = new vector<Error> ;
+    mErrorVct->clear() ;
         
-        return ;
-    } // Parser()
+    return ;
+  } // Parser()
     
-    bool PrintSExp( S_Expression sExp ) {
+  bool PrintSExp( S_Expression sExp ) {
         
-        return true ;
-    } // printSExp
+    return true ;
+  } // printSExp
     
-    bool Eval( S_Expression sExp, bool notEnd ) {
-        if ( isExit( sExp.mTokenString ) ) {
-            notEnd = false ;
-            return true ;
-        } // if
-        else {
-            Error temp( OTHERS ) ;
-            mErrorVct->push_back( temp ) ;
-            return true ; // return false ;
-        } // else
+  bool Eval( S_Expression sExp, bool notEnd ) {
+    if ( IsExit( sExp.mTokenString ) ) {
+      notEnd = false ;
+      return true ;
+    } // if
+    else {
+      Error temp( OTHERS ) ;
+      mErrorVct->push_back( temp ) ;
+      return true ; // return false ;
+    } // else
         
-    } // Eval()
+  } // Eval()
     
-    bool IsExit ( TokenPtr tokenString ) {
-        if ( tokenString != NULL &&
-             tokenString->mTokenType == LEFTPAREN &&
-             tokenString->mNext != NULL &&
-             * tokenString->mNext->mToken == "exit" &&
-             tokenString->mNext->mNext != NULL &&
-             tokenString->mNext->mNext->mTokenType == RIGHTPAREN )
-            return true ;
-        else
-            return false ;
+  bool IsExit( TokenPtr tokenString ) {
+    if ( tokenString != NULL &&
+         tokenString->mTokenType == LEFTPAREN &&
+         tokenString->mNext != NULL &&
+         * tokenString->mNext->mToken == "exit" &&
+         tokenString->mNext->mNext != NULL &&
+         tokenString->mNext->mNext->mTokenType == RIGHTPAREN )
+      return true ;
+    else
+      return false ;
         
-    } // IsExit()
+  } // IsExit()
     
-    void PrintError() {
+  void PrintError() {
         
-        return ;
-    } // PrintError()
+    return ;
+  } // PrintError()
     
 } ; // class parser
 
@@ -210,43 +210,42 @@ public:
 
 int main() {
     
-    int inputID ;
-    bool notEnd = true ;
-    bool hasEof = false ;
-    SExpressionVctPtr sExpVct = new vector<S_Expression> ;
-    Scanner scanner ;
-    Parser parser ;
+  int inputID ;
+  bool notEnd = true ;
+  bool hasEof = false ;
+  SExpressionVctPtr sExpVct = new vector<S_Expression> ;
+  Scanner scanner ;
+  Parser parser ;
     
-    // printf( "Welcome to OurScheme!" ) ;
+  // printf( "Welcome to OurScheme!" ) ;
     
-    StringPtr test ;
-    cin >> inputID ;
-    if ( inputID == 1 ) {
-        while( ! cin.eof() ) {
-            test = scanner.GetLine() ;
-            cout << * test << endl ;
-        } // while
-        
-    } // if
-    
-    /*
-    while ( notEnd ) {    // not exit && not EOF
-        printf( "\n> " ) ;
-        
-        if ( scanner.ReadSExp( sExp, hasEof ) )
-            parser.PrintSExp( sExp ) ; // pretty print
-        else
-            scanner.PrintError() ;
-        
-        if ( parser.Eval( sExp, notEnd ) )
-            parser.PrintSExp( sExp ) ;
-        else
-            parser.PrintError() ;
-         
+  StringPtr test ;
+  cin >> inputID ;
+  if ( inputID == 1 ) {
+    while( ! cin.eof() ) {
+      test = scanner.GetLine() ;
+      cout << * test << endl ;
     } // while
-    */
-    // printf( "\nThanks for using OurScheme!" ) ;
+        
+  } // if
     
-    return 0 ;
+  /*
+  while ( notEnd ) {    // not exit && not EOF
+    printf( "\n> " ) ;
+    
+    if ( scanner.ReadSExp( sExp, hasEof ) )
+      parser.PrintSExp( sExp ) ; // pretty print
+    else
+      scanner.PrintError() ;
+    
+    if ( parser.Eval( sExp, notEnd ) )
+      parser.PrintSExp( sExp ) ;
+    else
+      parser.PrintError() ;
+     
+  } // while
+  */
+  // printf( "\nThanks for using OurScheme!" ) ;
+    
+  return 0 ;
 } // main()
-
