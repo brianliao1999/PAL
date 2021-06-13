@@ -58,6 +58,12 @@ enum ErrorType { HASEOF, OTHERS, DEFAULTERROR } ;
 
 typedef Token * TokenPtr ;
 
+typedef string * stringPtr ;
+
+typedef vector<Error> * errorVctPtr ;
+
+typedef vector<S_Expression> * sExpressionVctPtr ;
+
 //---       function head     ---
 
 //---       class             ---
@@ -66,14 +72,15 @@ class Token {
     
 public:
     TokenType tokenType ;
-    string token ;
+    stringPtr token ;
     int line ;
     int column ;
     TokenPtr next ;
     
     Token() { // Constructor
         tokenType = DEFAULTTOKEN ;
-        token = "" ;
+        token = new string ;
+        token->clear() ;
         line = -1 ;
         column = -1 ;
         next = NULL ;
@@ -85,11 +92,12 @@ class S_Expression {
     
 public:
     TokenPtr tokenString ;
-    string completeSExp ;
+    stringPtr completeSExp ;
     
     S_Expression() { // Constructor
         tokenString = NULL ;
-        completeSExp = "" ;
+        completeSExp = new string ;
+        completeSExp->clear() ;
         
         return ;
     } // S_Expression()
@@ -116,15 +124,16 @@ public:
 } ; // class Error
 
 class Scanner {
-    string loadedLine ;
-    vector<Error> errorVct ;
+    stringPtr loadedLine ;
+    errorVctPtr errorVct ;
     int line ;
     int column ;
 public:
     Scanner() { // Constructor
-        loadedLine = "" ;
-        errorVct.clear() ;
-        errorVct.shrink_to_fit() ;
+        loadedLine = new string ;
+        loadedLine->clear() ;
+        errorVct = new vector<Error> ;
+        errorVct->clear() ;
         line = 0 ;
         column = 0 ;
         
@@ -140,16 +149,24 @@ public:
     
     //A function which has to get a Token and return a TokenPtr that point to a Token contain a string of this Token and its line and column.
     bool getToken( TokenPtr & token ) {
-        while ( ! cin.eof() && loadedLine.empty() ) {
-            getline( cin, loadedLine ) ;
-            if ( ! loadedLine.empty() )
-                line++ ;
-            
-        } // while
         
         
         return true ;
     } // getToken()
+    
+    stringPtr getLine() {
+        stringPtr lineIn = new string ;
+        char temp ;
+        
+        temp = cin.get() ;
+        while( temp != '\n' ) {
+            lineIn->push_back( temp ) ;
+            temp = cin.get() ;
+        } // while
+        line++ ;
+        
+        return lineIn ;
+    } // getLine()
     
     void printError() {
         
@@ -159,11 +176,11 @@ public:
 } ; // class Scanner
 
 class Parser {
-    vector<Error> errorVct ;
+    errorVctPtr errorVct ;
 public:
     Parser() { // Constructor
-        errorVct.clear() ;
-        errorVct.shrink_to_fit() ;
+        errorVct = new vector<Error> ;
+        errorVct->clear() ;
         
         return ;
     } // Parser()
@@ -180,7 +197,7 @@ public:
         } // if
         else {
             Error temp( OTHERS ) ;
-            errorVct.push_back( temp ) ;
+            errorVct->push_back( temp ) ;
             return true ; //return false ;
         } // else
         
@@ -190,7 +207,7 @@ public:
         if ( tokenString != NULL &&
              tokenString->tokenType == LEFTPAREN &&
              tokenString->next != NULL &&
-             tokenString->next->token == "exit" &&
+             * tokenString->next->token == "exit" &&
              tokenString->next->next != NULL &&
              tokenString->next->next->tokenType == RIGHTPAREN )
             return true ;
@@ -213,18 +230,18 @@ int main( int argc, const char * argv[] ) {
     int inputID ;
     bool notEnd = true ;
     bool hasEof = false ;
-    S_Expression sExp ;
+    sExpressionVctPtr sExpVct = new vector<S_Expression> ;
     Scanner scanner ;
     Parser parser ;
     
     //printf( "Welcome to OurScheme!" ) ;
     
-    string test ;
+    stringPtr test ;
     cin >> inputID ;
     if ( inputID == 1 ) {
         while( ! cin.eof() ) {
-            getline( cin, test ) ;
-            cout << test ;
+            test = scanner.getLine() ;
+            cout << * test << endl ;
         } // while
         
     } // if
