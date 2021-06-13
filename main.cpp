@@ -127,7 +127,7 @@ public:
   bool ReadSExp( S_Expression & sExp, bool hasEof ) {
         
     return true ;
-  } // ResdSExp()
+  } // ReadSExp()
     
   // A function which has to get a Token and return a TokenPtr that
   // point to a Token contain a string of this Token and its line and column.
@@ -142,10 +142,11 @@ public:
     char temp ;
         
     temp = cin.get() ;
-    while( temp != '\n' ) {
+    while ( temp != '\n' ) {
       lineIn->push_back( temp ) ;
       temp = cin.get() ;
     } // while
+    
     mLine++ ;
         
     return lineIn ;
@@ -171,7 +172,7 @@ public:
   bool PrintSExp( S_Expression sExp ) {
         
     return true ;
-  } // printSExp
+  } // PrintSExp()
     
   bool Eval( S_Expression sExp, bool notEnd ) {
     if ( IsExit( sExp.mTokenString ) ) {
@@ -222,7 +223,7 @@ int main() {
   StringPtr test ;
   cin >> inputID ;
   if ( inputID == 1 ) {
-    while( ! cin.eof() ) {
+    while ( ! cin.eof() ) {
       test = scanner.GetLine() ;
       cout << * test << endl ;
     } // while
