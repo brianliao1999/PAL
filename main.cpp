@@ -27,33 +27,33 @@
 
 using namespace std ;
 
-//---       class head        ---
+// ---       class head        ---
 
-//An object of a Token that contain every data about Token include the Token it point to , linked by pointer( link list ).
+// An object of a Token that contain every data about Token include the Token it point to , linked by pointer( link list ).
 class Token ;
 
-//An object which has every data about s-expression.
+// An object which has every data about s-expression.
 class S_Expression ;
 
-//An object which has every data about error.
+// An object which has every data about error.
 class Error ;
 
-//An object which has a job to get input in.
+// An object which has a job to get input in.
 class Scanner ;
 
-//An object which has jobs to check syntax and evaluate.
+// An object which has jobs to check syntax and evaluate.
 class Parser ;
 
-//---       type head         ---
+// ---       type head         ---
 
 
 
-//---       type define       ---
+// ---       type define       ---
 
-//A type of Token.
+// A type of Token.
 enum TokenType { LEFTPAREN, RIGHTPAREN, INT, STRING, DOT, FLOAT, NIL, T, QUOTE, SYMBOL, DEFAULTTOKEN } ;
 
-//A type of Error.
+// A type of Error.
 enum ErrorType { HASEOF, OTHERS, DEFAULTERROR } ;
 
 typedef Token * TokenPtr ;
@@ -64,9 +64,9 @@ typedef vector<Error> * errorVctPtr ;
 
 typedef vector<S_Expression> * sExpressionVctPtr ;
 
-//---       function head     ---
+// ---       function head     ---
 
-//---       class             ---
+// ---       class             ---
 
 class Token {
     
@@ -147,7 +147,7 @@ public:
         return true ;
     } // resdSExp()
     
-    //A function which has to get a Token and return a TokenPtr that point to a Token contain a string of this Token and its line and column.
+    // A function which has to get a Token and return a TokenPtr that point to a Token contain a string of this Token and its line and column.
     bool getToken( TokenPtr & token ) {
         
         
@@ -198,7 +198,7 @@ public:
         else {
             Error temp( OTHERS ) ;
             errorVct->push_back( temp ) ;
-            return true ; //return false ;
+            return true ; // return false ;
         } // else
         
     } // eval()
@@ -223,9 +223,9 @@ public:
     
 } ; // class parser
 
-//---       general function  ---
+// ---       general function  ---
 
-int main( int argc, const char * argv[] ) {
+int main() {
     
     int inputID ;
     bool notEnd = true ;
@@ -234,7 +234,7 @@ int main( int argc, const char * argv[] ) {
     Scanner scanner ;
     Parser parser ;
     
-    //printf( "Welcome to OurScheme!" ) ;
+    // printf( "Welcome to OurScheme!" ) ;
     
     stringPtr test ;
     cin >> inputID ;
@@ -262,7 +262,7 @@ int main( int argc, const char * argv[] ) {
          
     } // while
     */
-    //printf( "\nThanks for using OurScheme!" ) ;
+    // printf( "\nThanks for using OurScheme!" ) ;
     
     return 0 ;
 } // main()
