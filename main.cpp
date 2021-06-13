@@ -142,7 +142,7 @@ public:
     char temp ;
         
     temp = cin.get() ;
-    while ( temp != '\n' ) {
+    while ( temp != '\n' && ! cin.eof() ) {
       lineIn->push_back( temp ) ;
       temp = cin.get() ;
     } // while
