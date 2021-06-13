@@ -29,7 +29,8 @@ using namespace std ;
 
 // ---       class head        ---
 
-// An object of a Token that contain every data about Token include the Token it point to , linked by pointer( link list ).
+// An object of a Token that contain every data about Token include the Token it point to,
+// linked by pointer( link list ).
 class Token ;
 
 // An object which has every data about s-expression.
@@ -58,11 +59,11 @@ enum ErrorType { HASEOF, OTHERS, DEFAULTERROR } ;
 
 typedef Token * TokenPtr ;
 
-typedef string * stringPtr ;
+typedef string * StringPtr ;
 
-typedef vector<Error> * errorVctPtr ;
+typedef vector<Error> * ErrorVctPtr ;
 
-typedef vector<S_Expression> * sExpressionVctPtr ;
+typedef vector<S_Expression> * SExpressionVctPtr ;
 
 // ---       function head     ---
 
@@ -72,7 +73,7 @@ class Token {
     
 public:
     TokenType tokenType ;
-    stringPtr token ;
+    StringPtr token ;
     int line ;
     int column ;
     TokenPtr next ;
@@ -92,7 +93,7 @@ class S_Expression {
     
 public:
     TokenPtr tokenString ;
-    stringPtr completeSExp ;
+    StringPtr completeSExp ;
     
     S_Expression() { // Constructor
         tokenString = NULL ;
@@ -124,8 +125,8 @@ public:
 } ; // class Error
 
 class Scanner {
-    stringPtr loadedLine ;
-    errorVctPtr errorVct ;
+    StringPtr loadedLine ;
+    ErrorVctPtr errorVct ;
     int line ;
     int column ;
 public:
@@ -154,8 +155,8 @@ public:
         return true ;
     } // getToken()
     
-    stringPtr getLine() {
-        stringPtr lineIn = new string ;
+    StringPtr getLine() {
+        StringPtr lineIn = new string ;
         char temp ;
         
         temp = cin.get() ;
@@ -176,7 +177,7 @@ public:
 } ; // class Scanner
 
 class Parser {
-    errorVctPtr errorVct ;
+    ErrorVctPtr errorVct ;
 public:
     Parser() { // Constructor
         errorVct = new vector<Error> ;
@@ -230,13 +231,13 @@ int main() {
     int inputID ;
     bool notEnd = true ;
     bool hasEof = false ;
-    sExpressionVctPtr sExpVct = new vector<S_Expression> ;
+    SExpressionVctPtr sExpVct = new vector<S_Expression> ;
     Scanner scanner ;
     Parser parser ;
     
     // printf( "Welcome to OurScheme!" ) ;
     
-    stringPtr test ;
+    StringPtr test ;
     cin >> inputID ;
     if ( inputID == 1 ) {
         while( ! cin.eof() ) {
