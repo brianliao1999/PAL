@@ -222,10 +222,12 @@ int main() {
     
   StringPtr test ;
   cin >> inputID ;
+  int i = 0 ;
   if ( inputID == 1 ) {
-    while ( ! cin.eof() ) {
+    while ( ! cin.eof() || i != 100 ) {
       test = scanner.GetLine() ;
       cout << * test << endl ;
+      i++ ;
     } // while
         
   } // if
