@@ -948,6 +948,7 @@ public:
       
       walk = walk->mNext ;
     } // while
+    cout << endl << endl ;
     
     return true ;
   } // PrintSExp()
@@ -996,29 +997,35 @@ int main() {
   Scanner scanner ;
   Parser parser ;
     
-  cout << "Welcome to OurScheme!" ;
+  cout << "Welcome to OurScheme!" << endl << endl ;
   
   cin >> inputID ;
   
   while ( notEnd && inputID == 1 ) {    // not exit && not EOF
-    cout <<  "\n> " ;
+    cout <<  "> " ;
     
     delete sExpPtr ;
     sExpPtr = NULL ;
     
     if ( scanner.ReadSExp( sExpPtr ) ) {
-      parser.PrintSExp( sExpPtr ) ; // pretty print
       
-      if ( parser.Eval( sExpPtr, notEnd ) )
-        ; // parser.PrintSExp( sExpPtr ) ;
+      if ( parser.Eval( sExpPtr, notEnd ) ) {
+        if ( notEnd ) {
+          parser.PrintSExp( sExpPtr ) ; // pretty print
+        } // if
+        
+      } // if
       else
         ; // parser.PrintError() ;
       
     } // if
     else
       scanner.PrintError( hasEof ) ;
+    
      
   } // while
+  
+  cout << endl << "Thanks for using OurScheme!" ;
 
   // printf( "\nThanks for using OurScheme!" ) ;
     
