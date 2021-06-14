@@ -1,5 +1,6 @@
 
 # include <iostream>
+# include <fstream>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string>
@@ -18,6 +19,9 @@ class S_Expression ;
 
 // An object which has every data about error.
 class Error ;
+
+// An object which contain a Token pointer and a left-node pointer and a right-node pointer
+class CorrespondingTree ;
 
 // An object which has a job to get input in.
 class Scanner ;
@@ -47,7 +51,7 @@ typedef vector<Error> * ErrorVctPtr ;
 
 typedef S_Expression * SExpressionPtr ;
 
-
+typedef CorrespondingTree * CorrespondingTreePtr ;
 
 // ---       function head     ---
 
@@ -114,12 +118,29 @@ public:
     
 } ; // class Error
 
+class CorrespondingTree {
+  
+public:
+  TokenPtr mToken ;
+  CorrespondingTreePtr mLeftNode ;
+  CorrespondingTreePtr mRightNode ;
+  
+  CorrespondingTree() { // Constructor
+    mToken = NULL ;
+    mLeftNode = NULL ;
+    mRightNode = NULL ;
+    
+  } // CorrespondingTree()
+  
+} ; // class CorrespondingTree
+
 class Scanner {
   StringPtr mLoadedLine ;
   TokenPtr mPeekedToken ;
   ErrorVctPtr mErrorVct ;
   int mLine ;
   int mColumn ;
+  
 public:
   Scanner() { // Constructor
     mLoadedLine = new string ;
@@ -225,10 +246,6 @@ public:
                 if ( hasError ) {
                   // there has some errors
                   
-                  if ( ! first ) {
-                    mErrorVct->at( mErrorVct->size() - 1 ).mErrorType = NOCLOSE ;
-                  } // if
-                  
                   DeleteTokenPtr( head ) ;
                   
                   return head ;
@@ -288,10 +305,6 @@ public:
                     else {
                       // next Token has some errors
                       
-                      if ( ! first ) {
-                        mErrorVct->at( mErrorVct->size() - 1 ).mErrorType = NOCLOSE ;
-                      } // if
-                      
                       DeleteTokenPtr( head ) ;
                       
                       return head ;
@@ -331,10 +344,6 @@ public:
               else {
                 // next Token has some errors
                 
-                if ( ! first ) {
-                  mErrorVct->at( mErrorVct->size() - 1 ).mErrorType = NOCLOSE ;
-                } // if
-                
                 DeleteTokenPtr( head ) ;
                 
                 return head ;
@@ -347,10 +356,6 @@ public:
         } // if
         else {
           // next Token has some errors
-          
-          if ( ! first ) {
-            mErrorVct->at( mErrorVct->size() - 1 ).mErrorType = NOCLOSE ;
-          } // if
           
           DeleteTokenPtr( head ) ;
           
@@ -402,10 +407,6 @@ public:
     else {
       // next Token has some errors
       
-      if ( ! first ) {
-        mErrorVct->at( mErrorVct->size() - 1 ).mErrorType = NOCLOSE ;
-      } // if
-      
       DeleteTokenPtr( head ) ;
       
       hasError = true ;
@@ -449,6 +450,7 @@ public:
     int i = 0 ;
     int index = 0 ;
     StringPtr temp = new string ;
+    bool hasError = false ;
     
     if ( mPeekedToken != NULL ) {
       token = mPeekedToken ;
@@ -465,7 +467,7 @@ public:
       if ( ! cin.eof() ) {
         token = new Token ;
         
-        if ( GetString( index, temp ) ) {
+        if ( GetString( index, temp, hasError ) ) {
           mColumn = mColumn + index + 1 ;
           token->mToken = temp ;
           temp = NULL ;
@@ -477,6 +479,10 @@ public:
           
           return true ;
         } // if
+        else if ( hasError ) {
+          
+          return false ;
+        } // else if
         else if ( mLoadedLine->at( 0 ) == ';' ) {
           temp->clear() ;
           temp = NULL ;
@@ -696,9 +702,10 @@ public:
   // and return its index in mLoadedLine
   // else return false.
   // must be start at index 0.
-  bool GetString( int & index, StringPtr string ) {
+  bool GetString( int & index, StringPtr string, bool & hasError ) {
     int escape = 0 ;
     index = 0 ;
+    hasError = false ;
     
     if ( mLoadedLine->at( index ) == '\"' ) {
       string->push_back( '"' ) ;
@@ -754,8 +761,19 @@ public:
         
       } // for
       
-      return false ;
+      hasError = true ;
+      Error temp ;
+      temp.mLine = mLine ;
+      temp.mColumn = mColumn + index + 1 ;
+      temp.mErrorType = NOCLOSE ;
       
+      mErrorVct->push_back( temp ) ;
+      
+      mLoadedLine->clear() ;
+      mLine = 0 ;
+      mColumn = 0 ;
+      
+      return false ;
     } // if
     else
       return false ;
@@ -794,6 +812,7 @@ public:
   bool IsFloat( StringPtr string ) {
     int i = 0 ;
     bool hasDot = false ;
+    bool hasDigit = false ;
     
     if ( string->at( 0 ) != '0' && string->at( 0 ) != '1' &&
          string->at( 0 ) != '2' && string->at( 0 ) != '3' &&
@@ -804,6 +823,11 @@ public:
       
       return false ;
     } // if
+    hasDigit = ( string->at( 0 ) == '0' || string->at( 0 ) == '1' ||
+                 string->at( 0 ) == '2' || string->at( 0 ) == '3' ||
+                 string->at( 0 ) == '4' || string->at( 0 ) == '5' ||
+                 string->at( 0 ) == '6' || string->at( 0 ) == '7' ||
+                 string->at( 0 ) == '8' || string->at( 0 ) == '9' ) ;
     
     if ( string->at( 0 ) == '.' ) {
       hasDot = true ;
@@ -819,6 +843,14 @@ public:
         return false ;
       } // if
       
+      if ( ! hasDigit ) {
+        hasDigit = ( string->at( i ) == '0' || string->at( i ) == '1' ||
+                     string->at( i ) == '2' || string->at( i ) == '3' ||
+                     string->at( i ) == '4' || string->at( i ) == '5' ||
+                     string->at( i ) == '6' || string->at( i ) == '7' ||
+                     string->at( i ) == '8' || string->at( i ) == '9' ) ;
+      } // if
+      
       if ( string->at( i ) == '.' ) {
         if ( hasDot ) {
           return false ;
@@ -831,7 +863,7 @@ public:
       
     } // for
     
-    return true ;
+    return hasDigit ;
   } // IsFloat()
   
   bool IsNIL( StringPtr string ) {
@@ -944,7 +976,21 @@ public:
     TokenPtr walk = sExp->mTokenString ;
     
     while ( walk != NULL ) {
-      cout << * walk->mToken ;
+      if ( walk->mTokenType == INT ) {
+        cout << stoi( * walk->mToken ) ;
+      } // if
+      else if ( walk->mTokenType == FLOAT ) {
+        cout << stof( * walk->mToken ) ;
+      } // else if
+      else if ( walk->mTokenType == NIL ) {
+        cout << "nil" ;
+      } // else if
+      else if ( walk->mTokenType == T ) {
+        cout << "#t" ;
+      } // else if
+      else {
+        cout << * walk->mToken ;
+      } // else
       
       walk = walk->mNext ;
     } // while
@@ -997,7 +1043,9 @@ int main() {
   SExpressionPtr sExpPtr = NULL ;
   Scanner scanner ;
   Parser parser ;
-    
+  
+  cout << fixed << setprecision(3) ;
+  
   cout << "Welcome to OurScheme!" << endl << endl ;
   
   cin >> inputID ;
