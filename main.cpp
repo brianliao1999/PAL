@@ -7,8 +7,6 @@
 
 using namespace std ;
 
-int mark = -1 ;
-
 // ---       class head        ---
 
 // An object of a Token that contain every data about Token include the Token it point to,
@@ -997,7 +995,7 @@ int main() {
   
   cin >> inputID ;
   
-  while ( notEnd ) {    // not exit && not EOF
+  while ( notEnd && inputID == 1 ) {    // not exit && not EOF
     cout <<  "\n> " ;
     
     delete sExpPtr ;
