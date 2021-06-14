@@ -33,7 +33,8 @@ class Parser ;
 
 // A type of Token.
 enum TokenType { LEFTPAREN, RIGHTPAREN, INT, STRING, DOT, FLOAT,
-                 NIL, T, QUOTE, SYMBOL, SEMICOLON, DEFAULTTOKEN } ;
+                 NIL, T, QUOTE, SYMBOL, SEMICOLON, DEFAULTTOKEN
+} ;
 
 // A type of Error.
 enum ErrorType { HASEOF, EXPECTRIGHT, EXPECTLEFT, NOCLOSE, OTHERS, DEFAULTERROR } ;
@@ -538,14 +539,14 @@ public:
         else {
           while ( temp->empty() && ! mLoadedLine->empty() ) {
             for ( i = 0 ; i < mLoadedLine->size() &&
-                          mLoadedLine->at( i ) != '(' &&
-                          mLoadedLine->at( i ) != ')' &&
-                          mLoadedLine->at( i ) != '\'' &&
-                          mLoadedLine->at( i ) != '\"' &&
-                          mLoadedLine->at( i ) != ' ' &&
-                          mLoadedLine->at( i ) != '\t' &&
-                          mLoadedLine->at( i ) != '\n' &&
-                          mLoadedLine->at( i ) != ';' ; i++ ) {
+                  mLoadedLine->at( i ) != '(' &&
+                  mLoadedLine->at( i ) != ')' &&
+                  mLoadedLine->at( i ) != '\'' &&
+                  mLoadedLine->at( i ) != '\"' &&
+                  mLoadedLine->at( i ) != ' ' &&
+                  mLoadedLine->at( i ) != '\t' &&
+                  mLoadedLine->at( i ) != '\n' &&
+                  mLoadedLine->at( i ) != ';' ; i++ ) {
               temp->push_back( mLoadedLine->at( i ) ) ;
               
             } // for
@@ -739,6 +740,7 @@ public:
           else {
             index-- ;
           } // else
+          
           escape = 0 ;
           
         } // if
@@ -751,6 +753,7 @@ public:
         } // else
         
       } // for
+      
       return false ;
       
     } // if
@@ -834,7 +837,7 @@ public:
   bool IsNIL( StringPtr string ) {
     
     if ( string->size() == 3 && string->at( 0 ) == 'n' &&
-        string->at( 1 ) == 'i' && string->at( 2 ) == 'l' ) {
+         string->at( 1 ) == 'i' && string->at( 2 ) == 'l' ) {
       
       return true ;
     } // if
