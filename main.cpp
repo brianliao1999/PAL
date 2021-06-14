@@ -4,6 +4,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string>
+# include <string.h>
 # include <vector>
 
 using namespace std ;
@@ -874,6 +875,7 @@ public:
       
       return false ;
     } // if
+    
     hasDigit = ( string->at( 0 ) == '0' || string->at( 0 ) == '1' ||
                  string->at( 0 ) == '2' || string->at( 0 ) == '3' ||
                  string->at( 0 ) == '4' || string->at( 0 ) == '5' ||
@@ -1095,7 +1097,7 @@ int main() {
   Scanner scanner ;
   Parser parser ;
   
-  cout << fixed << setprecision(3) ;
+  cout << fixed << setprecision( 3 ) ;
   
   cout << "Welcome to OurScheme!" << endl << endl ;
   
