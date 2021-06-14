@@ -1,6 +1,6 @@
 
 # include <iostream>
-# include <fstream>
+# include <iomanip>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string>
@@ -47,6 +47,8 @@ typedef Token * TokenPtr ;
 
 typedef string * StringPtr ;
 
+typedef char * CharPtr ;
+
 typedef vector<Error> * ErrorVctPtr ;
 
 typedef S_Expression * SExpressionPtr ;
@@ -61,15 +63,14 @@ class Token {
     
 public:
   TokenType mTokenType ;
-  StringPtr mToken ;
+  CharPtr mToken ;
   int mLine ;
   int mColumn ;
   TokenPtr mNext ;
     
   Token() { // Constructor
     mTokenType = DEFAULTTOKEN ;
-    mToken = new string ;
-    mToken->clear() ;
+    mToken = NULL ;
     mLine = -1 ;
     mColumn = -1 ;
     mNext = NULL ;
@@ -469,7 +470,12 @@ public:
         
         if ( GetString( index, temp, hasError ) ) {
           mColumn = mColumn + index + 1 ;
-          token->mToken = temp ;
+          token->mToken = new char[ temp->size() ] ;
+          for ( int j = 0 ; j < temp->size() ; j++ ) {
+            token->mToken[ j ] = temp->at( j ) ;
+          } // for
+          
+          delete temp ;
           temp = NULL ;
           token->mLine = mLine ;
           token->mColumn = mColumn ;
@@ -496,7 +502,12 @@ public:
           mColumn = mColumn + 1 ;
           temp->clear() ;
           temp->push_back( '\'' ) ;
-          token->mToken = temp ;
+          token->mToken = new char[ temp->size() ] ;
+          for ( int j = 0 ; j < temp->size() ; j++ ) {
+            token->mToken[ j ] = temp->at( j ) ;
+          } // for
+          
+          delete temp ;
           temp = NULL ;
           token->mLine = mLine ;
           token->mColumn = mColumn ;
@@ -510,7 +521,12 @@ public:
           mColumn = mColumn + 1 ;
           temp->clear() ;
           temp->push_back( '(' ) ;
-          token->mToken = temp ;
+          token->mToken = new char[ temp->size() ] ;
+          for ( int j = 0 ; j < temp->size() ; j++ ) {
+            token->mToken[ j ] = temp->at( j ) ;
+          } // for
+          
+          delete temp ;
           temp = NULL ;
           token->mLine = mLine ;
           token->mColumn = mColumn ;
@@ -524,7 +540,12 @@ public:
           mColumn = mColumn + 1 ;
           temp->clear() ;
           temp->push_back( ')' ) ;
-          token->mToken = temp ;
+          token->mToken = new char[ temp->size() ] ;
+          for ( int j = 0 ; j < temp->size() ; j++ ) {
+            token->mToken[ j ] = temp->at( j ) ;
+          } // for
+          
+          delete temp ;
           temp = NULL ;
           token->mLine = mLine ;
           token->mColumn = mColumn ;
@@ -572,7 +593,12 @@ public:
           else { // temp isn't empty
             if ( IsT( temp ) ) {
               mColumn = mColumn + temp->size() ;
-              token->mToken = temp ;
+              token->mToken = new char[ temp->size() ] ;
+              for ( int j = 0 ; j < temp->size() ; j++ ) {
+                token->mToken[ j ] = temp->at( j ) ;
+              } // for
+              
+              delete temp ;
               temp = NULL ;
               token->mLine = mLine ;
               token->mColumn = mColumn ;
@@ -582,7 +608,12 @@ public:
             } // if
             else if ( IsDot( temp ) ) {
               mColumn = mColumn + temp->size() ;
-              token->mToken = temp ;
+              token->mToken = new char[ temp->size() ] ;
+              for ( int j = 0 ; j < temp->size() ; j++ ) {
+                token->mToken[ j ] = temp->at( j ) ;
+              } // for
+              
+              delete temp ;
               temp = NULL ;
               token->mLine = mLine ;
               token->mColumn = mColumn ;
@@ -592,7 +623,12 @@ public:
             } // else if
             else if ( IsNIL( temp ) ) {
               mColumn = mColumn + temp->size() ;
-              token->mToken = temp ;
+              token->mToken = new char[ temp->size() ] ;
+              for ( int j = 0 ; j < temp->size() ; j++ ) {
+                token->mToken[ j ] = temp->at( j ) ;
+              } // for
+              
+              delete temp ;
               temp = NULL ;
               token->mLine = mLine ;
               token->mColumn = mColumn ;
@@ -602,7 +638,12 @@ public:
             } // else if
             else if ( IsFloat( temp ) ) {
               mColumn = mColumn + temp->size() ;
-              token->mToken = temp ;
+              token->mToken = new char[ temp->size() ] ;
+              for ( int j = 0 ; j < temp->size() ; j++ ) {
+                token->mToken[ j ] = temp->at( j ) ;
+              } // for
+              
+              delete temp ;
               temp = NULL ;
               token->mLine = mLine ;
               token->mColumn = mColumn ;
@@ -612,7 +653,12 @@ public:
             } // else if
             else if ( IsInteger( temp ) ) {
               mColumn = mColumn + temp->size() ;
-              token->mToken = temp ;
+              token->mToken = new char[ temp->size() ] ;
+              for ( int j = 0 ; j < temp->size() ; j++ ) {
+                token->mToken[ j ] = temp->at( j ) ;
+              } // for
+              
+              delete temp ;
               temp = NULL ;
               token->mLine = mLine ;
               token->mColumn = mColumn ;
@@ -622,7 +668,12 @@ public:
             } // else if
             else {
               mColumn = mColumn + temp->size() ;
-              token->mToken = temp ;
+              token->mToken = new char[ temp->size() ] ;
+              for ( int j = 0 ; j < temp->size() ; j++ ) {
+                token->mToken[ j ] = temp->at( j ) ;
+              } // for
+              
+              delete temp ;
               temp = NULL ;
               token->mLine = mLine ;
               token->mColumn = mColumn ;
@@ -977,10 +1028,10 @@ public:
     
     while ( walk != NULL ) {
       if ( walk->mTokenType == INT ) {
-        cout << stoi( * walk->mToken ) ;
+        cout << atoi( walk->mToken ) ;
       } // if
       else if ( walk->mTokenType == FLOAT ) {
-        cout << stof( * walk->mToken ) ;
+        cout << atof( walk->mToken ) ;
       } // else if
       else if ( walk->mTokenType == NIL ) {
         cout << "nil" ;
@@ -989,7 +1040,7 @@ public:
         cout << "#t" ;
       } // else if
       else {
-        cout << * walk->mToken ;
+        cout << walk->mToken ;
       } // else
       
       walk = walk->mNext ;
@@ -1017,7 +1068,7 @@ public:
     if ( tokenString != NULL &&
          tokenString->mTokenType == LEFTPAREN &&
          tokenString->mNext != NULL &&
-         * tokenString->mNext->mToken == "exit" &&
+         strcmp( tokenString->mNext->mToken, "exit" ) == 0 &&
          tokenString->mNext->mNext != NULL &&
          tokenString->mNext->mNext->mTokenType == RIGHTPAREN )
       return true ;
