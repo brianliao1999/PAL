@@ -32,7 +32,8 @@ class Parser ;
 // ---       type define       ---
 
 // A type of Token.
-enum TokenType { LEFTPAREN, RIGHTPAREN, INT, STRING, DOT, FLOAT, NIL, T, QUOTE, SYMBOL, SEMICOLON, DEFAULTTOKEN } ;
+enum TokenType { LEFTPAREN, RIGHTPAREN, INT, STRING, DOT, FLOAT,
+                 NIL, T, QUOTE, SYMBOL, SEMICOLON, DEFAULTTOKEN } ;
 
 // A type of Error.
 enum ErrorType { HASEOF, EXPECTRIGHT, EXPECTLEFT, NOCLOSE, OTHERS, DEFAULTERROR } ;
@@ -114,7 +115,7 @@ public:
 
 class Scanner {
   StringPtr mLoadedLine ;
-  TokenPtr peekedToken ;
+  TokenPtr mPeekedToken ;
   ErrorVctPtr mErrorVct ;
   int mLine ;
   int mColumn ;
@@ -122,7 +123,7 @@ public:
   Scanner() { // Constructor
     mLoadedLine = new string ;
     mLoadedLine->clear() ;
-    peekedToken = NULL ;
+    mPeekedToken = NULL ;
     mErrorVct = new vector<Error> ;
     mErrorVct->clear() ;
     mLine = -1 ;
@@ -150,7 +151,7 @@ public:
     
     TokenPtr head = NULL ;
     TokenPtr tail = NULL ;
-    TokenType peekedTokenType = DEFAULTTOKEN ;
+    TokenType mPeekedTokenType = DEFAULTTOKEN ;
     
     if ( GetToken( head ) ) {
       // get a Token
@@ -167,10 +168,10 @@ public:
         // :: = <ATOM> | LEFT-PAREN <S-exp> { <S-exp> } [ DOT <S-exp> ] RIGHT-PAREN
         // the Token is a LEFT-PAREN, could be an ATOM or sth else.
         
-        if ( peekToken( peekedTokenType ) ) {
+        if ( PeekToken( mPeekedTokenType ) ) {
           // peek what next Token is
           
-          if ( peekedTokenType == RIGHTPAREN ) {
+          if ( mPeekedTokenType == RIGHTPAREN ) {
             // :: = <ATOM> :: = RIGHT-PAREN LEFT-PAREN
             // the Token string could be combined to an ATOM
             // also a S-EXP
@@ -199,9 +200,9 @@ public:
               // :: = LEFT-PAREN <S-exp> !at here! { <S-exp> } [ DOT <S-exp> ] RIGHT-PAREN
               // have got a S-EXP, peek what next Token is.
               
-              if ( peekToken( peekedTokenType ) ) {
+              if ( PeekToken( mPeekedTokenType ) ) {
                 
-                while ( peekedTokenType != DOT && peekedTokenType != RIGHTPAREN && ! hasError ) {
+                while ( mPeekedTokenType != DOT && mPeekedTokenType != RIGHTPAREN && ! hasError ) {
                   // the next Token isn't a DOT or RIGHT-PAREN
                   // there are no errors when peeking and getting next S-EXP
                   // continue with getting S-EXP
@@ -211,7 +212,7 @@ public:
                   tail->mNext = GetSExp( hasError, false ) ;
                   tail = GetTail( head ) ;
                   if ( ! hasError ) {
-                    hasError = ! peekToken( peekedTokenType ) ;
+                    hasError = ! PeekToken( mPeekedTokenType ) ;
                   } // if
                   
                 } // while
@@ -231,7 +232,7 @@ public:
                   
                   return head ;
                 } // if
-                else if ( peekedTokenType == DOT ) {
+                else if ( mPeekedTokenType == DOT ) {
                   // the next Token is DOT
                   
                   GetToken( tail->mNext ) ;
@@ -298,7 +299,7 @@ public:
                   } // else
                   
                 } // if
-                else if ( peekedTokenType == RIGHTPAREN ) {
+                else if ( mPeekedTokenType == RIGHTPAREN ) {
                   // :: = LEFT-PAREN <S-exp> { <S-exp> } [ DOT <S-exp> ] RIGHT-PAREN !at here!
                   // the Token string is a S-exp !
                   
@@ -307,7 +308,7 @@ public:
                   
                   return head ;
                 } // else if
-                else { // if ( peekedTokenType != DOT && peekedTokenType != RIGHTPAREN )
+                else { // if ( mPeekedTokenType != DOT && mPeekedTokenType != RIGHTPAREN )
                   // :: = LEFT-PAREN <S-exp> { <S-exp> } [ DOT <S-exp> ] !at here! RIGHT-PAREN
                   // here should has a RIGHT-PAREN, but it doesn't
                   // so it should be an error.
@@ -336,7 +337,7 @@ public:
                 DeleteTokenPtr( head ) ;
                 
                 return head ;
-              } //
+              } // else
               
             } // else
             
@@ -448,17 +449,18 @@ public:
     int index = 0 ;
     StringPtr temp = new string ;
     
-    if ( peekedToken != NULL ) {
-      token = peekedToken ;
-      peekedToken = NULL ;
+    if ( mPeekedToken != NULL ) {
+      token = mPeekedToken ;
+      mPeekedToken = NULL ;
       
       return true ;
     } // if
-    else { // if ( peekedToken == NULL )
+    else { // if ( mPeekedToken == NULL )
       
       while ( mLoadedLine->empty() && ! cin.eof() ) {
         mLoadedLine = GetLine() ;
       } // while
+      
       if ( ! cin.eof() ) {
         token = new Token ;
         
@@ -474,7 +476,7 @@ public:
           
           return true ;
         } // if
-        else if ( mLoadedLine->at(0) == ';' ) {
+        else if ( mLoadedLine->at( 0 ) == ';' ) {
           temp->clear() ;
           temp = NULL ;
           token = NULL ;
@@ -483,7 +485,7 @@ public:
           
           return GetToken( token ) ;
         } // else if
-        else if ( mLoadedLine->at(0) == '\'' ) {
+        else if ( mLoadedLine->at( 0 ) == '\'' ) {
           mColumn = mColumn + 1 ;
           temp->clear() ;
           temp->push_back( '\'' ) ;
@@ -497,7 +499,7 @@ public:
           
           return true ;
         } // else if
-        else if ( mLoadedLine->at(0) == '(' ) {
+        else if ( mLoadedLine->at( 0 ) == '(' ) {
           mColumn = mColumn + 1 ;
           temp->clear() ;
           temp->push_back( '(' ) ;
@@ -511,7 +513,7 @@ public:
           
           return true ;
         } // else if
-        else if ( mLoadedLine->at(0) == ')' ) {
+        else if ( mLoadedLine->at( 0 ) == ')' ) {
           mColumn = mColumn + 1 ;
           temp->clear() ;
           temp->push_back( ')' ) ;
@@ -525,8 +527,8 @@ public:
           
           return true ;
         } // else if
-        else if ( mLoadedLine->at(0) == ' ' ||
-                  mLoadedLine->at(0) == '\t' || mLoadedLine->at(0) == '\n' ) {
+        else if ( mLoadedLine->at( 0 ) == ' ' ||
+                  mLoadedLine->at( 0 ) == '\t' || mLoadedLine->at( 0 ) == '\n' ) {
           
           mLoadedLine->erase( mLoadedLine->begin() ) ;
           mColumn++ ;
@@ -536,15 +538,15 @@ public:
         else {
           while ( temp->empty() && ! mLoadedLine->empty() ) {
             for ( i = 0 ; i < mLoadedLine->size() &&
-                          mLoadedLine->at(i) != '(' &&
-                          mLoadedLine->at(i) != ')' &&
-                          mLoadedLine->at(i) != '\'' &&
-                          mLoadedLine->at(i) != '\"' &&
-                          mLoadedLine->at(i) != ' ' &&
-                          mLoadedLine->at(i) != '\t' &&
-                          mLoadedLine->at(i) != '\n' &&
-                          mLoadedLine->at(i) != ';' ; i++ ) {
-              temp->push_back( mLoadedLine->at(i) ) ;
+                          mLoadedLine->at( i ) != '(' &&
+                          mLoadedLine->at( i ) != ')' &&
+                          mLoadedLine->at( i ) != '\'' &&
+                          mLoadedLine->at( i ) != '\"' &&
+                          mLoadedLine->at( i ) != ' ' &&
+                          mLoadedLine->at( i ) != '\t' &&
+                          mLoadedLine->at( i ) != '\n' &&
+                          mLoadedLine->at( i ) != ';' ; i++ ) {
+              temp->push_back( mLoadedLine->at( i ) ) ;
               
             } // for
             
@@ -644,11 +646,11 @@ public:
   } // GetToken()
   
   // A function to peek what next Token is ane use GetToken() to get a Token
-  // and put it into peekedToken
-  bool peekToken( TokenType & tokenType ) {
-    if ( peekedToken != NULL ) {
+  // and put it into mPeekedToken
+  bool PeekToken( TokenType & tokenType ) {
+    if ( mPeekedToken != NULL ) {
       
-      tokenType = peekedToken->mTokenType ;
+      tokenType = mPeekedToken->mTokenType ;
       
       return true ;
     } // if
@@ -656,11 +658,11 @@ public:
       
       TokenPtr temp ;
       bool noError = GetToken( temp ) ;
-      peekedToken = temp ;
+      mPeekedToken = temp ;
       temp = NULL ;
       
       if ( noError ) {
-        tokenType = peekedToken->mTokenType ;
+        tokenType = mPeekedToken->mTokenType ;
         
         return true ;
       } // if
@@ -671,7 +673,7 @@ public:
       
     } // else
     
-  } // peekToken()
+  } // PeekToken()
     
   StringPtr GetLine() {
     StringPtr lineIn = new string ;
@@ -760,22 +762,22 @@ public:
   // A function to check if a string is a Token whose Token type is Integer.
   bool IsInteger( StringPtr string ) {
     
-    if ( string->at(0) != '0' && string->at(0) != '1' &&
-         string->at(0) != '2' && string->at(0) != '3' &&
-         string->at(0) != '4' && string->at(0) != '5' &&
-         string->at(0) != '6' && string->at(0) != '7' &&
-         string->at(0) != '8' && string->at(0) != '9' &&
-         string->at(0) != '+' && string->at(0) != '-' ) {
+    if ( string->at( 0 ) != '0' && string->at( 0 ) != '1' &&
+         string->at( 0 ) != '2' && string->at( 0 ) != '3' &&
+         string->at( 0 ) != '4' && string->at( 0 ) != '5' &&
+         string->at( 0 ) != '6' && string->at( 0 ) != '7' &&
+         string->at( 0 ) != '8' && string->at( 0 ) != '9' &&
+         string->at( 0 ) != '+' && string->at( 0 ) != '-' ) {
       
       return false ;
     } // if
     
     for ( int i = 1 ; i < string->size() ; i++ ) {
-      if ( string->at(i) != '0' && string->at(i) != '1' &&
-           string->at(i) != '2' && string->at(i) != '3' &&
-           string->at(i) != '4' && string->at(i) != '5' &&
-           string->at(i) != '6' && string->at(i) != '7' &&
-           string->at(i) != '8' && string->at(i) != '9' ) {
+      if ( string->at( i ) != '0' && string->at( i ) != '1' &&
+           string->at( i ) != '2' && string->at( i ) != '3' &&
+           string->at( i ) != '4' && string->at( i ) != '5' &&
+           string->at( i ) != '6' && string->at( i ) != '7' &&
+           string->at( i ) != '8' && string->at( i ) != '9' ) {
         
         return false ;
       } // if
@@ -790,31 +792,31 @@ public:
     int i = 0 ;
     bool hasDot = false ;
     
-    if ( string->at(0) != '0' && string->at(0) != '1' &&
-         string->at(0) != '2' && string->at(0) != '3' &&
-         string->at(0) != '4' && string->at(0) != '5' &&
-         string->at(0) != '6' && string->at(0) != '7' &&
-         string->at(0) != '8' && string->at(0) != '9' &&
-         string->at(0) != '+' && string->at(0) != '-' && string->at(0) != '.' ) {
+    if ( string->at( 0 ) != '0' && string->at( 0 ) != '1' &&
+         string->at( 0 ) != '2' && string->at( 0 ) != '3' &&
+         string->at( 0 ) != '4' && string->at( 0 ) != '5' &&
+         string->at( 0 ) != '6' && string->at( 0 ) != '7' &&
+         string->at( 0 ) != '8' && string->at( 0 ) != '9' &&
+         string->at( 0 ) != '+' && string->at( 0 ) != '-' && string->at( 0 ) != '.' ) {
       
       return false ;
     } // if
     
-    if ( string->at(0) == '.' ) {
+    if ( string->at( 0 ) == '.' ) {
       hasDot = true ;
     } // if
     
     for ( i = 1 ; i < string->size() ; i++ ) {
-      if ( string->at(i) != '0' && string->at(i) != '1' &&
-           string->at(i) != '2' && string->at(i) != '3' &&
-           string->at(i) != '4' && string->at(i) != '5' &&
-           string->at(i) != '6' && string->at(i) != '7' &&
-           string->at(i) != '8' && string->at(i) != '9' && string->at(i) != '.' ) {
+      if ( string->at( i ) != '0' && string->at( i ) != '1' &&
+           string->at( i ) != '2' && string->at( i ) != '3' &&
+           string->at( i ) != '4' && string->at( i ) != '5' &&
+           string->at( i ) != '6' && string->at( i ) != '7' &&
+           string->at( i ) != '8' && string->at( i ) != '9' && string->at( i ) != '.' ) {
         
         return false ;
       } // if
       
-      if ( string->at(i) == '.' ) {
+      if ( string->at( i ) == '.' ) {
         if ( hasDot ) {
           return false ;
         } // if
@@ -831,12 +833,12 @@ public:
   
   bool IsNIL( StringPtr string ) {
     
-    if ( string->size() == 3 && string->at(0) == 'n' &&
-        string->at(1) == 'i' && string->at(2) == 'l' ) {
+    if ( string->size() == 3 && string->at( 0 ) == 'n' &&
+        string->at( 1 ) == 'i' && string->at( 2 ) == 'l' ) {
       
       return true ;
     } // if
-    else if ( string->size() == 2 && string->at(0) == '#' && string->at(1) == 'f' ) {
+    else if ( string->size() == 2 && string->at( 0 ) == '#' && string->at( 1 ) == 'f' ) {
       
       return true ;
     } // else if
@@ -849,11 +851,11 @@ public:
   
   bool IsT( StringPtr string ) {
     
-    if ( string->size() == 1 && string->at(0) == 't' ) {
+    if ( string->size() == 1 && string->at( 0 ) == 't' ) {
       
       return true ;
     } // if
-    else if ( string->size() == 2 && string->at(0) == '#' && string->at(1) == 't' ) {
+    else if ( string->size() == 2 && string->at( 0 ) == '#' && string->at( 1 ) == 't' ) {
       
       return true ;
     } // else if
@@ -865,7 +867,7 @@ public:
   } // IsT()
   
   bool IsDot( StringPtr string ) {
-    if ( string->size() == 1 && string->at(0) == '.' ) {
+    if ( string->size() == 1 && string->at( 0 ) == '.' ) {
       
       return true ;
     } // if
@@ -892,22 +894,22 @@ public:
     
   void PrintError( bool & hasEof ) {
     for ( int i = 0 ; i < mErrorVct->size() ; i++ ) {
-      if ( mErrorVct->at(i).mErrorType == HASEOF ) {
+      if ( mErrorVct->at( i ).mErrorType == HASEOF ) {
         cout << "ERROR (no more input) : END-OF-FILE encountered" << endl ;
       } // if
-      else if ( mErrorVct->at(i).mErrorType == NOCLOSE ) {
+      else if ( mErrorVct->at( i ).mErrorType == NOCLOSE ) {
         cout << "ERROR (no closing quote) : END-OF-LINE encountered at Line " <<
-                mErrorVct->at(i).mLine << " Column " << mErrorVct->at(i).mColumn << endl ;
+                mErrorVct->at( i ).mLine << " Column " << mErrorVct->at( i ).mColumn << endl ;
       } // else if
-      else if ( mErrorVct->at(i).mErrorType == EXPECTRIGHT ) {
+      else if ( mErrorVct->at( i ).mErrorType == EXPECTRIGHT ) {
         cout << "ERROR (unexpected token) : ')' expected when token at Line " <<
-                mErrorVct->at(i).mLine << " Column " << mErrorVct->at(i).mColumn <<
-                " is >>" << mErrorVct->at(i).mToken << "<<" << endl ;
+                mErrorVct->at( i ).mLine << " Column " << mErrorVct->at( i ).mColumn <<
+                " is >>" << mErrorVct->at( i ).mToken << "<<" << endl ;
       } // else if
-      else if ( mErrorVct->at(i).mErrorType == EXPECTLEFT ) {
+      else if ( mErrorVct->at( i ).mErrorType == EXPECTLEFT ) {
         cout << "ERROR (unexpected token) : atom or '(' expected when token at Line " <<
-                mErrorVct->at(i).mLine << " Column " << mErrorVct->at(i).mColumn <<
-                " is >>" << mErrorVct->at(i).mToken << "<<" << endl ;
+                mErrorVct->at( i ).mLine << " Column " << mErrorVct->at( i ).mColumn <<
+                " is >>" << mErrorVct->at( i ).mToken << "<<" << endl ;
       } // else if
       else {
         cout << "ERROR (unexpected error)" << endl ;
