@@ -481,6 +481,7 @@ public:
           for ( j = 0 ; j < temp->size() ; j++ ) {
             token->mToken[ j ] = temp->at( j ) ;
           } // for
+          
           token->mToken[ j ] = '\0' ;
           
           delete temp ;
@@ -514,6 +515,7 @@ public:
           for ( j = 0 ; j < temp->size() ; j++ ) {
             token->mToken[ j ] = temp->at( j ) ;
           } // for
+          
           token->mToken[ j ] = '\0' ;
           
           delete temp ;
@@ -534,6 +536,7 @@ public:
           for ( j = 0 ; j < temp->size() ; j++ ) {
             token->mToken[ j ] = temp->at( j ) ;
           } // for
+          
           token->mToken[ j ] = '\0' ;
           
           delete temp ;
@@ -554,6 +557,7 @@ public:
           for ( j = 0 ; j < temp->size() ; j++ ) {
             token->mToken[ j ] = temp->at( j ) ;
           } // for
+          
           token->mToken[ j ] = '\0' ;
           
           delete temp ;
@@ -608,6 +612,7 @@ public:
               for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              
               token->mToken[ j ] = '\0' ;
               
               delete temp ;
@@ -624,6 +629,7 @@ public:
               for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              
               token->mToken[ j ] = '\0' ;
               
               delete temp ;
@@ -640,6 +646,7 @@ public:
               for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              
               token->mToken[ j ] = '\0' ;
               
               delete temp ;
@@ -656,6 +663,7 @@ public:
               for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              
               token->mToken[ j ] = '\0' ;
               
               delete temp ;
@@ -672,6 +680,7 @@ public:
               for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              
               token->mToken[ j ] = '\0' ;
               
               delete temp ;
@@ -688,6 +697,7 @@ public:
               for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              
               token->mToken[ j ] = '\0' ;
               
               delete temp ;
@@ -1148,5 +1158,3 @@ int main() {
     
   return 0 ;
 } // main()
-
-// 進度：寫一個 GetString()(?), 各個class有的stringPtr可以全部換掉
