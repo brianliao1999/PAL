@@ -1010,6 +1010,7 @@ public:
     for ( int i = 0 ; i < mErrorVct->size() ; i++ ) {
       if ( mErrorVct->at( i ).mErrorType == HASEOF ) {
         cout << "ERROR (no more input) : END-OF-FILE encountered" << endl ;
+        hasEof = true ;
       } // if
       else if ( mErrorVct->at( i ).mErrorType == NOCLOSE ) {
         cout << "ERROR (no closing quote) : END-OF-LINE encountered at Line " <<
@@ -1129,7 +1130,7 @@ int main() {
   
   cin >> inputID ;
   
-  while ( notEnd && inputID == 1 ) {    // not exit && not EOF
+  while ( notEnd && ! hasEof && inputID == 1 ) {    // not exit && not EOF
     cout <<  "> " ;
     
     if ( scanner.ReadSExp( sExpPtr ) ) {
