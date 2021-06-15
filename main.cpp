@@ -171,6 +171,7 @@ public:
   
   // A function which has to get a S-Expression( Token string )
   TokenPtr GetSExp( bool & hasError, bool first ) {
+    
     // <S-exp> :: = <ATOM> | LEFT-PAREN <S-exp> { <S-exp> } [ DOT <S-exp> ] RIGHT-PAREN | QUOTE <S-exp>
     
     TokenPtr head = NULL ;
@@ -257,10 +258,12 @@ public:
                   
                   GetToken( tail->mNext ) ;
                   tail = tail->mNext ;
+                  
                   // :: = LEFT-PAREN <S-exp> { <S-exp> } [ DOT !at here! <S-exp> ] RIGHT-PAREN
                   // next should be a S-EXP or RIGHT-PAREN
                   
                   tail->mNext = GetSExp( hasError, false ) ;
+                  
                   if ( hasError ) {
                     // there has some errors.
                     
@@ -276,6 +279,7 @@ public:
                     if ( GetToken( tail->mNext ) ) {
                       // have got next Token.
                       tail = tail->mNext ;
+                      
                       
                       if ( tail->mTokenType == RIGHTPAREN ) {
                         // :: = LEFT-PAREN <S-exp> { <S-exp> } [ DOT <S-exp> ] RIGHT-PAREN !at here!
@@ -320,6 +324,7 @@ public:
                   // the Token string is a S-exp !
                   
                   GetToken( tail->mNext ) ;
+                  
                   hasError = false ;
                   
                   return head ;
@@ -450,6 +455,7 @@ public:
   // its TokenType and line and column.
   bool GetToken( TokenPtr & token ) {
     int i = 0 ;
+    int j = 0 ;
     int index = 0 ;
     StringPtr temp = new string ;
     bool hasError = false ;
@@ -471,10 +477,11 @@ public:
         
         if ( GetString( index, temp, hasError ) ) {
           mColumn = mColumn + index + 1 ;
-          token->mToken = new char[ temp->size() ] ;
-          for ( int j = 0 ; j < temp->size() ; j++ ) {
+          token->mToken = new char[ temp->size() + 1 ] ;
+          for ( j = 0 ; j < temp->size() ; j++ ) {
             token->mToken[ j ] = temp->at( j ) ;
           } // for
+          token->mToken[ j ] = '\0' ;
           
           delete temp ;
           temp = NULL ;
@@ -503,10 +510,11 @@ public:
           mColumn = mColumn + 1 ;
           temp->clear() ;
           temp->push_back( '\'' ) ;
-          token->mToken = new char[ temp->size() ] ;
-          for ( int j = 0 ; j < temp->size() ; j++ ) {
+          token->mToken = new char[ temp->size() + 1 ] ;
+          for ( j = 0 ; j < temp->size() ; j++ ) {
             token->mToken[ j ] = temp->at( j ) ;
           } // for
+          token->mToken[ j ] = '\0' ;
           
           delete temp ;
           temp = NULL ;
@@ -522,10 +530,11 @@ public:
           mColumn = mColumn + 1 ;
           temp->clear() ;
           temp->push_back( '(' ) ;
-          token->mToken = new char[ temp->size() ] ;
-          for ( int j = 0 ; j < temp->size() ; j++ ) {
+          token->mToken = new char[ temp->size() + 1 ] ;
+          for ( j = 0 ; j < temp->size() ; j++ ) {
             token->mToken[ j ] = temp->at( j ) ;
           } // for
+          token->mToken[ j ] = '\0' ;
           
           delete temp ;
           temp = NULL ;
@@ -541,10 +550,11 @@ public:
           mColumn = mColumn + 1 ;
           temp->clear() ;
           temp->push_back( ')' ) ;
-          token->mToken = new char[ temp->size() ] ;
-          for ( int j = 0 ; j < temp->size() ; j++ ) {
+          token->mToken = new char[ temp->size() + 1 ] ;
+          for ( j = 0 ; j < temp->size() ; j++ ) {
             token->mToken[ j ] = temp->at( j ) ;
           } // for
+          token->mToken[ j ] = '\0' ;
           
           delete temp ;
           temp = NULL ;
@@ -594,10 +604,11 @@ public:
           else { // temp isn't empty
             if ( IsT( temp ) ) {
               mColumn = mColumn + temp->size() ;
-              token->mToken = new char[ temp->size() ] ;
-              for ( int j = 0 ; j < temp->size() ; j++ ) {
+              token->mToken = new char[ temp->size() + 1 ] ;
+              for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              token->mToken[ j ] = '\0' ;
               
               delete temp ;
               temp = NULL ;
@@ -609,10 +620,11 @@ public:
             } // if
             else if ( IsDot( temp ) ) {
               mColumn = mColumn + temp->size() ;
-              token->mToken = new char[ temp->size() ] ;
-              for ( int j = 0 ; j < temp->size() ; j++ ) {
+              token->mToken = new char[ temp->size() + 1 ] ;
+              for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              token->mToken[ j ] = '\0' ;
               
               delete temp ;
               temp = NULL ;
@@ -624,10 +636,11 @@ public:
             } // else if
             else if ( IsNIL( temp ) ) {
               mColumn = mColumn + temp->size() ;
-              token->mToken = new char[ temp->size() ] ;
-              for ( int j = 0 ; j < temp->size() ; j++ ) {
+              token->mToken = new char[ temp->size() + 1 ] ;
+              for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              token->mToken[ j ] = '\0' ;
               
               delete temp ;
               temp = NULL ;
@@ -639,10 +652,11 @@ public:
             } // else if
             else if ( IsFloat( temp ) ) {
               mColumn = mColumn + temp->size() ;
-              token->mToken = new char[ temp->size() ] ;
-              for ( int j = 0 ; j < temp->size() ; j++ ) {
+              token->mToken = new char[ temp->size() + 1 ] ;
+              for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              token->mToken[ j ] = '\0' ;
               
               delete temp ;
               temp = NULL ;
@@ -654,10 +668,11 @@ public:
             } // else if
             else if ( IsInteger( temp ) ) {
               mColumn = mColumn + temp->size() ;
-              token->mToken = new char[ temp->size() ] ;
-              for ( int j = 0 ; j < temp->size() ; j++ ) {
+              token->mToken = new char[ temp->size() + 1 ] ;
+              for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              token->mToken[ j ] = '\0' ;
               
               delete temp ;
               temp = NULL ;
@@ -669,10 +684,11 @@ public:
             } // else if
             else {
               mColumn = mColumn + temp->size() ;
-              token->mToken = new char[ temp->size() ] ;
-              for ( int j = 0 ; j < temp->size() ; j++ ) {
+              token->mToken = new char[ temp->size() + 1 ] ;
+              for ( j = 0 ; j < temp->size() ; j++ ) {
                 token->mToken[ j ] = temp->at( j ) ;
               } // for
+              token->mToken[ j ] = '\0' ;
               
               delete temp ;
               temp = NULL ;
@@ -1056,7 +1072,7 @@ public:
   bool Eval( SExpressionPtr sExp, bool & notEnd ) {
     if ( IsExit( sExp->mTokenString ) ) {
       notEnd = false ;
-      return true ;
+      return false ;
     } // if
     else {
       // Error temp( OTHERS ) ;
@@ -1106,9 +1122,6 @@ int main() {
   while ( notEnd && inputID == 1 ) {    // not exit && not EOF
     cout <<  "> " ;
     
-    delete sExpPtr ;
-    sExpPtr = NULL ;
-    
     if ( scanner.ReadSExp( sExpPtr ) ) {
       
       if ( parser.Eval( sExpPtr, notEnd ) ) {
@@ -1124,7 +1137,9 @@ int main() {
     else
       scanner.PrintError( hasEof ) ;
     
-     
+    delete sExpPtr ;
+    sExpPtr = NULL ;
+    
   } // while
   
   cout << endl << "Thanks for using OurScheme!" ;
@@ -1133,3 +1148,5 @@ int main() {
     
   return 0 ;
 } // main()
+
+// 進度：寫一個 GetString()(?), 各個class有的stringPtr可以全部換掉
