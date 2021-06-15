@@ -991,20 +991,6 @@ public:
     } // else
     
   } // IsDot()
-  
-  bool IsAtom( TokenType tokenType ) {
-    if ( tokenType == SYMBOL || tokenType == INT ||
-         tokenType == FLOAT || tokenType == STRING ||
-         tokenType == NIL || tokenType == T ) {
-      
-      return true ;
-    } // if
-    else {
-      
-      return false ;
-    } // else
-      
-  } // IsAtom()
     
   void PrintError( bool & hasEof ) {
     for ( int i = 0 ; i < mErrorVct->size() ; i++ ) {
@@ -1039,6 +1025,20 @@ public:
     
     return ;
   } // PrintError()
+  
+static bool IsAtom( TokenType tokenType ) {
+  if ( tokenType == SYMBOL || tokenType == INT ||
+       tokenType == FLOAT || tokenType == STRING ||
+       tokenType == NIL || tokenType == T ) {
+    
+    return true ;
+  } // if
+  else {
+    
+    return false ;
+  } // else
+    
+} // IsAtom()
     
 } ; // class Scanner
 
@@ -1085,6 +1085,7 @@ public:
       notEnd = false ;
       return false ;
     } // if
+    // PlantTree
     else {
       // Error temp( OTHERS ) ;
       // mErrorVct->push_back( temp ) ;
@@ -1092,7 +1093,25 @@ public:
     } // else
         
   } // Eval()
+  
+  CorrespondingTreePtr PlantTree( TokenPtr sExp ) {
+    CorrespondingTreePtr tree ;
     
+    if ( Scanner::IsAtom( sExp->mTokenType ) ) {
+      return tree ;
+    } // if
+    return tree ;
+  } // PlatTree()
+    
+  CorrespondingTreePtr Cons( CorrespondingTreePtr a, CorrespondingTreePtr b ) {
+    CorrespondingTreePtr c = new CorrespondingTree ;
+    
+    c->mLeftNode = a ;
+    c->mRightNode = b ;
+    
+    return c ;
+  } // Cons)
+  
   bool IsExit( TokenPtr tokenString ) {
     if ( tokenString != NULL &&
          tokenString->mTokenType == LEFTPAREN &&
@@ -1159,3 +1178,4 @@ int main() {
     
   return 0 ;
 } // main()
+
