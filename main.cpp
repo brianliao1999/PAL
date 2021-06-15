@@ -650,22 +650,6 @@ public:
               
               return true ;
             } // else if
-            else if ( IsFloat( temp ) ) {
-              mColumn = mColumn + temp->size() ;
-              token->mToken = new char[ temp->size() + 1 ] ;
-              for ( j = 0 ; j < temp->size() ; j++ ) {
-                token->mToken[ j ] = temp->at( j ) ;
-              } // for
-              token->mToken[ j ] = '\0' ;
-              
-              delete temp ;
-              temp = NULL ;
-              token->mLine = mLine ;
-              token->mColumn = mColumn ;
-              token->mTokenType = FLOAT ;
-              
-              return true ;
-            } // else if
             else if ( IsInteger( temp ) ) {
               mColumn = mColumn + temp->size() ;
               token->mToken = new char[ temp->size() + 1 ] ;
@@ -679,6 +663,22 @@ public:
               token->mLine = mLine ;
               token->mColumn = mColumn ;
               token->mTokenType = INT ;
+              
+              return true ;
+            } // else if
+            else if ( IsFloat( temp ) ) {
+              mColumn = mColumn + temp->size() ;
+              token->mToken = new char[ temp->size() + 1 ] ;
+              for ( j = 0 ; j < temp->size() ; j++ ) {
+                token->mToken[ j ] = temp->at( j ) ;
+              } // for
+              token->mToken[ j ] = '\0' ;
+              
+              delete temp ;
+              temp = NULL ;
+              token->mLine = mLine ;
+              token->mColumn = mColumn ;
+              token->mTokenType = FLOAT ;
               
               return true ;
             } // else if
