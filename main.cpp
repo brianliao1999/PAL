@@ -96,7 +96,7 @@ public:
       return ;
     } // else
     
-  } // DeleteToken()
+  } // DeleteTokenString()
     
 } ; //  class Token
 
@@ -1186,9 +1186,9 @@ public:
     } // else if
     else if ( token->mTokenType != NIL ) {
       cout << token->mToken << endl ;
-    } // else
+    } // else if
     
-  } // printToken
+  } // PrintToken()
   
   void CheckTree( CorrespondingTreePtr head ) {
     
@@ -1253,7 +1253,7 @@ public:
     bool hasError = false ;
     head = NULL ;
     
-    head = PlantTree( sExp->mTokenString , hasError ) ;
+    head = PlantTree( sExp->mTokenString, hasError ) ;
     
     if ( hasError ) {
       head = NULL ;
@@ -1272,7 +1272,7 @@ public:
     if ( head->mTokenType == LEFTPAREN ) {
       TokenPtr tail = head ;
       
-      return getSExpTree( head, tail ) ;
+      return GetSExpTree( head, tail ) ;
     } // if
     else if ( head->mTokenType == QUOTE ) {
       CorrespondingTreePtr temp = new CorrespondingTree ;
@@ -1280,7 +1280,7 @@ public:
       temp->mLeftNode->mToken = head ;
       TokenPtr tail = head->mNext ;
       
-      temp->mRightNode = getSExpTree( head->mNext, tail ) ;
+      temp->mRightNode = GetSExpTree( head->mNext, tail ) ;
       
       return temp ;
     } // else if
@@ -1296,9 +1296,9 @@ public:
       return NULL ;
     } // else
     
-  } // PlatTree()
+  } // PlantTree()
   
-  CorrespondingTreePtr getSExpTree( TokenPtr head, TokenPtr & tail ) {
+  CorrespondingTreePtr GetSExpTree( TokenPtr head, TokenPtr & tail ) {
     
     if ( head == NULL ) {
       return NULL ;
@@ -1307,12 +1307,12 @@ public:
       
       if ( head->mNext->mTokenType == RIGHTPAREN ) {
         
-        return getSExpTree( head->mNext, tail ) ;
+        return GetSExpTree( head->mNext, tail ) ;
       } // if
       else { // if ( head->mNext->mTokenType != RIGHTPAREN )
-        CorrespondingTreePtr tempA = getSExpTree( head->mNext, tail ) ;
+        CorrespondingTreePtr tempA = GetSExpTree( head->mNext, tail ) ;
         
-        CorrespondingTreePtr tempB = getSExpTree( tail, tail ) ;
+        CorrespondingTreePtr tempB = GetSExpTree( tail, tail ) ;
               
         if ( tempB != NULL ) {
           
@@ -1330,12 +1330,12 @@ public:
       CorrespondingTreePtr temp = new CorrespondingTree ;
       temp->mToken = head ;
       
-      return Cons( temp, getSExpTree( head->mNext, tail )) ;
+      return Cons( temp, GetSExpTree( head->mNext, tail ) ) ;
     } // else if
     else if ( head->mTokenType == DOT ) {
       
       if ( head->mNext->mTokenType == LEFTPAREN ) {
-        CorrespondingTreePtr temp = getSExpTree( head->mNext->mNext, tail ) ;
+        CorrespondingTreePtr temp = GetSExpTree( head->mNext->mNext, tail ) ;
         tail = tail->mNext ;
         
         return temp ;
@@ -1372,7 +1372,7 @@ public:
       return NULL ;
     } // else
     
-  } // getSExpTree()
+  } // GetSExpTree()
     
   CorrespondingTreePtr Cons( CorrespondingTreePtr a, CorrespondingTreePtr b ) {
     CorrespondingTreePtr c = new CorrespondingTree ;
@@ -1381,7 +1381,7 @@ public:
     c->mRightNode = b ;
     
     return c ;
-  } // Cons)
+  } // Cons()
   
   bool IsExit( TokenPtr tokenString ) {
     if ( tokenString != NULL &&
