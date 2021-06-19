@@ -188,15 +188,29 @@ public:
     bool error = false ;
     sExp->mTokenString = GetSExp( error, true ) ;
     mColumn = 0 ;
-    if ( mLoadedLine->empty() ) {
+    if ( mLoadedLine->empty() || ! AllWhiteSpace( mLoadedLine ) ) {
       mLine = 0 ;
     } // if
     else {
       mLine = 1 ;
-    } // else
+    } // else (  )
     
     return ! error ;
   } // ReadSExp()
+  
+  bool AllWhiteSpace( StringPtr string ) {
+    
+    int len = string->size() ;
+    
+    for ( int i = 0 ; i < len ; i++ ) {
+      if ( string->at( i ) != ' ' || string->at( i ) != '\t' || string->at( i ) != '\n' ) {
+        return false ;
+      } // if
+      
+    } // for
+    
+    return true ;
+  } // AllWhiteSpace()
   
   // A function which has to get a S-Expression( Token string )
   TokenPtr GetSExp( bool & hasError, bool first ) {
