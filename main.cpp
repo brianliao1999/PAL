@@ -1041,11 +1041,12 @@ public:
     
   } // IsDot()
     
-  void PrintError() {
+  void PrintError( bool & hasEof ) {
     for ( int i = 0 ; i < mErrorVct->size() ; i++ ) {
       if ( mErrorVct->at( i ).mErrorType == HASEOF &&
            ( mLoadedLine->empty() || AllWhiteSpace( mLoadedLine ) ) ) {
         cout << "ERROR (no more input) : END-OF-FILE encountered" << endl ;
+        hasEof = true ;
       } // if
       else if ( mErrorVct->at( i ).mErrorType == NOCLOSE ) {
         cout << "ERROR (no closing quote) : END-OF-LINE encountered at Line " <<
@@ -1487,7 +1488,7 @@ int main() {
       
     } // if
     else { // scanner has Error () )
-      scanner.PrintError() ;
+      scanner.PrintError( hasEof ) ;
     } // else
       
     
