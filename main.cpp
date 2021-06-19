@@ -76,6 +76,27 @@ public:
     mColumn = -1 ;
     mNext = NULL ;
   } // Token()
+  
+static void DeleteTokenString( TokenPtr & head ) {
+  
+  if ( head == NULL ) {
+    return ;
+  } // if
+  else if ( head->mNext == NULL ) {
+    delete [] head->mToken ;
+    head->mToken = NULL ;
+    
+    return ;
+  } // else if
+  else {
+    DeleteTokenString( head->mNext ) ;
+    delete [] head->mToken ;
+    head->mToken = NULL ;
+    
+    return ;
+  } // else
+  
+} // DeleteToken()
     
 } ; //  class Token
 
@@ -83,15 +104,18 @@ class S_Expression {
     
 public:
   TokenPtr mTokenString ;
-  StringPtr mCompleteSExp ;
     
   S_Expression() { // Constructor
     mTokenString = NULL ;
-    mCompleteSExp = new string ;
-    mCompleteSExp->clear() ;
         
     return ;
   } // S_Expression()
+  
+static void DeleteSExp( SExpressionPtr & sExp  ) {
+  
+  sExp->mTokenString = NULL ;
+  
+} // DeleteSExp()
     
 } ; // class S_Expression
 
@@ -1065,13 +1089,22 @@ public:
       else if ( walk->mTokenType == NIL ) {
         cout << "nil" ;
       } // else if
+      else if ( walk->mTokenType == DOT ) {
+        cout << "." ;
+      } // else if
+      else if ( walk->mTokenType == RIGHTPAREN ) {
+        cout << ")" ;
+      } // else if
+      else if ( walk->mTokenType == LEFTPAREN ) {
+        cout << "(" ;
+      } // else if
       else if ( walk->mTokenType == T ) {
         cout << "#t" ;
       } // else if
       else {
         cout << walk->mToken ;
       } // else
-      
+      cout << " " ;
       walk = walk->mNext ;
     } // while
     
@@ -1079,29 +1112,266 @@ public:
     
     return true ;
   } // PrintSExp()
+  
+  bool PrintCorrespondingTree( CorrespondingTreePtr head, int space, bool fromLeft ) {
     
-  bool Eval( SExpressionPtr sExp, bool & notEnd ) {
-    if ( IsExit( sExp->mTokenString ) ) {
-      notEnd = false ;
-      return false ;
+    if ( head == NULL ) {
+      return true ;
     } // if
-    // PlantTree
-    else {
-      // Error temp( OTHERS ) ;
-      // mErrorVct->push_back( temp ) ;
-      return true ; // return false ;
+    else { // if ( head != NULL )
+      
+      if ( head->mToken != NULL ) {
+        
+        PrintToken( head->mToken ) ;
+        
+        return true ;
+      } // if
+      else {
+        
+        if ( fromLeft ) {
+          cout << "( " ;
+          space = space + 2 ;
+
+        } // if
+        
+        PrintCorrespondingTree( head->mLeftNode, space, true ) ;
+        
+        if ( head->mRightNode->mToken != NULL ) {
+          if ( head->mRightNode->mToken->mTokenType != NIL ) {
+            PrintSpace( space ) ;
+            cout << "." << endl ;
+            PrintSpace( space ) ;
+            PrintToken( head->mRightNode->mToken ) ;
+          } // if
+          
+        } // if
+        else {
+          PrintSpace( space ) ;
+          PrintCorrespondingTree( head->mRightNode, space, false ) ;
+        } // else
+        
+        if ( fromLeft ) {
+          space = space - 2 ;
+          PrintSpace( space ) ;
+          cout << ")" << endl ;
+        } // if
+        
+        return true ;
+      } // else
+      
     } // else
+    
+  } // PrintCorrespondingTree()
+  
+  void PrintToken( TokenPtr token ) {
+    
+    if ( token->mTokenType == DOT ) {
+      cout << "." << endl ;
+    } // else if
+    else if ( token->mTokenType == QUOTE ) {
+      cout << "quote" << endl ;
+    } // else if
+    else if ( token->mTokenType == NIL ) {
+      cout << "nil" << endl ;
+    } // if
+    else if ( token->mTokenType == T ) {
+      cout << "#t" << endl ;
+    } // else if
+    else if ( token->mTokenType == INT ) {
+      cout << atoi( token->mToken ) << endl ;
+    } // else if
+    else if ( token->mTokenType == FLOAT ) {\
+      cout << atof( token->mToken ) << endl ;
+    } // else if
+    else if ( token->mTokenType != NIL ) {
+      cout << token->mToken << endl ;
+    } // else
+    
+  } // printToken
+  
+  void CheckTree( CorrespondingTreePtr head ) {
+    
+    if ( head != NULL ) {
+      
+      if ( head->mToken != NULL ) {
+        if ( head->mToken->mTokenType == NIL ) {
+          cout << "nil" << endl ;
+        } // if
+        else if ( head->mToken->mTokenType == DOT ) {
+          cout << "." << endl ;
+        } // else if
+        else if ( head->mToken->mTokenType == QUOTE ) {
+          cout << "quote" << endl ;
+        } // else if
+        else if ( head->mToken->mTokenType == T ) {
+          cout << "#t" << endl ;
+        } // else if
+        else if ( head->mToken->mTokenType == INT ) {
+          cout << atoi( head->mToken->mToken ) << endl ;
+        } // else if
+        else if ( head->mToken->mTokenType == FLOAT ) {
+          cout << atof( head->mToken->mToken ) << endl ;
+        } // else if
+        else {
+          cout << head->mToken->mToken << endl ;
+        } // else
+        
+      } // if
+      else {
+        cout << "L : " << endl ;
+        CheckTree( head->mLeftNode ) ;
+        cout << "\nR : " << endl ;
+        CheckTree( head->mRightNode ) ;
+        
+      } // else
+      
+      return ;
+    } // if
+    else {
+      cout << "NULL" << endl ;
+      return ;
+    } // else
+    
+  } // CheckTree()
+  
+  void PrintSpace( int space ) {
+    for ( int i = 0 ; i < space ; i++ ) {
+      cout << " " ;
+    } // for
+    
+    return ;
+  } // PrintSpace()
+    
+  bool Eval( SExpressionPtr sExp ) {
+    
+    return true ;
         
   } // Eval()
   
-  CorrespondingTreePtr PlantTree( TokenPtr sExp ) {
-    CorrespondingTreePtr tree ;
+  bool PlantCorrespondingTree( SExpressionPtr sExp, CorrespondingTreePtr & head ) {
+    bool hasError = false ;
+    head = NULL ;
     
-    if ( Scanner::IsAtom( sExp->mTokenType ) ) {
-      return tree ;
+    head = PlantTree( sExp->mTokenString , hasError ) ;
+    
+    if ( hasError ) {
+      head = NULL ;
+      
+      return false ;
     } // if
-    return tree ;
+    else { // if ( no Error )
+      
+      return true ;
+    } // else
+    
+  } // PlantCorrespondingTree()
+  
+  CorrespondingTreePtr PlantTree( TokenPtr head, bool & error ) {
+    
+    if ( head->mTokenType == LEFTPAREN ) {
+      TokenPtr tail = head ;
+      
+      return getSExpTree( head, tail ) ;
+    } // if
+    else if ( head->mTokenType == QUOTE ) {
+      CorrespondingTreePtr temp = new CorrespondingTree ;
+      temp->mLeftNode = new CorrespondingTree ;
+      temp->mLeftNode->mToken = head ;
+      TokenPtr tail = head->mNext ;
+      
+      temp->mRightNode = getSExpTree( head->mNext, tail ) ;
+      
+      return temp ;
+    } // else if
+    else if ( Scanner::IsAtom( head->mTokenType ) ) {
+      CorrespondingTreePtr temp = new CorrespondingTree ;
+      temp->mToken = head ;
+      
+      return temp ;
+    } // else if
+    else {
+      error = true ;
+      
+      return NULL ;
+    } // else
+    
   } // PlatTree()
+  
+  CorrespondingTreePtr getSExpTree( TokenPtr head, TokenPtr & tail ) {
+    
+    if ( head == NULL ) {
+      return NULL ;
+    } // if
+    else if ( head->mTokenType == LEFTPAREN ) {
+      
+      if ( head->mNext->mTokenType == RIGHTPAREN ) {
+        
+        return getSExpTree( head->mNext, tail ) ;
+      } // if
+      else { // if ( head->mNext->mTokenType != RIGHTPAREN )
+        CorrespondingTreePtr tempA = getSExpTree( head->mNext, tail ) ;
+        
+        CorrespondingTreePtr tempB = getSExpTree( tail, tail ) ;
+              
+        if ( tempB != NULL ) {
+          
+          return Cons( tempA, tempB ) ;
+        } // if
+        else {
+          
+          return tempA ;
+        } // else
+        
+      } // else
+      
+    } // else if
+    else if ( Scanner::IsAtom( head->mTokenType ) ) {
+      CorrespondingTreePtr temp = new CorrespondingTree ;
+      temp->mToken = head ;
+      
+      return Cons( temp, getSExpTree( head->mNext, tail )) ;
+    } // else if
+    else if ( head->mTokenType == DOT ) {
+      
+      if ( head->mNext->mTokenType == LEFTPAREN ) {
+        CorrespondingTreePtr temp = getSExpTree( head->mNext->mNext, tail ) ;
+        tail = tail->mNext ;
+        
+        return temp ;
+      } // if
+      else if ( Scanner::IsAtom( head->mNext->mTokenType ) ) {
+        CorrespondingTreePtr temp = new CorrespondingTree ;
+        temp->mToken = head->mNext ;
+        tail = head->mNext->mNext->mNext ;
+        
+        return temp ;
+      } // else if
+      else {
+        cout << "here are some error I don't know." << endl ;
+        
+        return NULL ;
+      } // else
+      
+    } // else if
+    else if ( head->mTokenType == RIGHTPAREN ) {
+      
+      CorrespondingTreePtr temp = new CorrespondingTree ;
+      
+      TokenPtr nil = new Token ;
+      nil->mTokenType = NIL ;
+      temp->mToken = nil ;
+      
+      tail = head->mNext ;
+      
+      return temp ;
+    } // else if
+    else {
+      cout << "here are some error I don't know." << endl ;
+      
+      return NULL ;
+    } // else
+    
+  } // getSExpTree()
     
   CorrespondingTreePtr Cons( CorrespondingTreePtr a, CorrespondingTreePtr b ) {
     CorrespondingTreePtr c = new CorrespondingTree ;
@@ -1136,12 +1406,20 @@ public:
 
 int main() {
     
-  int inputID ;
-  bool notEnd = true ;
-  bool hasEof = false ;
-  SExpressionPtr sExpPtr = NULL ;
   Scanner scanner ;
   Parser parser ;
+  
+  int inputID ;
+  
+  bool notEnd = true ;
+  bool hasEof = false ;
+  bool hasError = false ;
+  
+  SExpressionPtr sExpPtr = NULL ;
+  
+  vector<CorrespondingTreePtr> treeVct ;
+  
+  CorrespondingTreePtr correspondingTreePtr = NULL ;
   
   cout << fixed << setprecision( 3 ) ;
   
@@ -1154,21 +1432,38 @@ int main() {
     
     if ( scanner.ReadSExp( sExpPtr ) ) {
       
-      if ( parser.Eval( sExpPtr, notEnd ) ) {
-        if ( notEnd ) {
-          parser.PrintSExp( sExpPtr ) ; // pretty print
+      notEnd = ! parser.IsExit( sExpPtr->mTokenString ) ;
+      if ( parser.PlantCorrespondingTree( sExpPtr, correspondingTreePtr ) ) {
+        
+        if ( parser.Eval( sExpPtr ) ) {
+          
+          if ( notEnd ) {
+            // parser.CheckTree( correspondingTreePtr ) ;
+            int space = 0 ;
+            int max = 0 ;
+            parser.PrintCorrespondingTree( correspondingTreePtr, space, true ) ; // pretty print
+          } // if
+          
         } // if
+        else { // Eval() has Error
+          parser.PrintError() ;
+        } // else
         
       } // if
-      else
-        ; // parser.PrintError() ;
+      else { // if PlantCorrespondingTree() has Error
+        cout << "Has Error when planting tree." << endl ;
+      } // else
       
     } // if
-    else
+    else { // scanner has Error
       scanner.PrintError( hasEof ) ;
+    } // else
     
+    S_Expression::DeleteSExp( sExpPtr ) ;
     delete sExpPtr ;
     sExpPtr = NULL ;
+    
+    cout << endl ;
     
   } // while
   
