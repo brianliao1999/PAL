@@ -188,7 +188,12 @@ public:
     bool error = false ;
     sExp->mTokenString = GetSExp( error, true ) ;
     mColumn = 0 ;
-    mLine = 0 ;
+    if ( mLoadedLine->empty() ) {
+      mLine = 0 ;
+    } // if
+    else {
+      mLine = 1 ;
+    } // else
     
     return ! error ;
   } // ReadSExp()
@@ -907,7 +912,15 @@ public:
       
     } // for
     
-    return true ;
+    if ( ( string->at( 0 ) == '+' || string->at( 0 ) == '-' ) && string->size() == 1 ) {
+      
+      return false ;
+    } // if
+    else {
+      
+      return true ;
+    } // else
+    
   } // IsInteger()
   
   // A function to check if a string is a Token whose Token type is Float.
@@ -1456,7 +1469,7 @@ int main() {
       } // else
       
     } // if
-    else { // scanner has Error
+    else { // scanner has Error () )
       scanner.PrintError( hasEof ) ;
     } // else
     
