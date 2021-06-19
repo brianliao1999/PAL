@@ -1300,9 +1300,21 @@ public:
   CorrespondingTreePtr PlantTree( TokenPtr head, bool & error ) {
     
     if ( head->mTokenType == LEFTPAREN ) {
-      TokenPtr tail = head ;
       
-      return GetSExpTree( head, tail ) ;
+      if ( head->mNext->mTokenType == RIGHTPAREN ) {
+        CorrespondingTreePtr temp = new CorrespondingTree ;
+        TokenPtr nil = new Token ;
+        nil->mTokenType = NIL ;
+        temp->mToken = nil ;
+        
+        return temp ;
+      } // if
+      else {
+        TokenPtr tail = head ;
+        
+        return GetSExpTree( head, tail ) ;
+      } // else
+      
     } // if
     else if ( head->mTokenType == QUOTE ) {
       CorrespondingTreePtr temp = new CorrespondingTree ;
@@ -1336,8 +1348,8 @@ public:
     else if ( head->mTokenType == LEFTPAREN ) {
       
       if ( head->mNext->mTokenType == RIGHTPAREN ) {
-        
-        return GetSExpTree( head->mNext, tail ) ;
+        tail = head->mNext->mNext ;
+        return Cons( GetSExpTree( head->mNext, tail ),  GetSExpTree( tail, tail ) ) ;
       } // if
       else { // if ( head->mNext->mTokenType != RIGHTPAREN )
         CorrespondingTreePtr tempA = GetSExpTree( head->mNext, tail ) ;
