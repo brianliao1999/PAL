@@ -203,7 +203,7 @@ public:
     int len = string->size() ;
     
     for ( int i = 0 ; i < len ; i++ ) {
-      if ( string->at( i ) != ' ' || string->at( i ) != '\t' || string->at( i ) != '\n' ) {
+      if ( string->at( i ) != ' ' && string->at( i ) != '\t' && string->at( i ) != '\n' ) {
         return false ;
       } // if
       
