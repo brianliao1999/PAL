@@ -188,7 +188,7 @@ public:
     bool error = false ;
     sExp->mTokenString = GetSExp( error, true ) ;
     mColumn = 0 ;
-    if ( mLoadedLine->empty() || ! AllWhiteSpace( mLoadedLine ) ) {
+    if ( mLoadedLine->empty() || AllWhiteSpace( mLoadedLine ) ) {
       mLine = 0 ;
     } // if
     else {
@@ -515,7 +515,7 @@ public:
         mLoadedLine = GetLine() ;
       } // while
       
-      if ( ! cin.eof() ) {
+      if ( ! mLoadedLine->empty() ) {
         token = new Token ;
         
         if ( GetString( index, temp, hasError ) ) {
@@ -645,7 +645,7 @@ public:
             
           } // while
           
-          if ( temp->empty() ) { // mLoadedLine is empty 
+          if ( temp->empty() ) { // mLoadedLine is empty
             return GetToken( token ) ;
           } // if
           else { // temp isn't empty
@@ -754,12 +754,10 @@ public:
             
           } // else
           
-          
-          
         } // else
         
       } // if
-      else { // if ( cin.eof() )
+      else {
         Error temp ;
         temp.mErrorType = HASEOF ;
         temp.mColumn = mColumn ;
@@ -1043,11 +1041,10 @@ public:
     
   } // IsDot()
     
-  void PrintError( bool & hasEof ) {
+  void PrintError() {
     for ( int i = 0 ; i < mErrorVct->size() ; i++ ) {
-      if ( mErrorVct->at( i ).mErrorType == HASEOF ) {
+      if ( mErrorVct->at( i ).mErrorType == HASEOF && ( mLoadedLine->empty() || AllWhiteSpace( mLoadedLine ) ) ) {
         cout << "ERROR (no more input) : END-OF-FILE encountered" << endl ;
-        hasEof = true ;
       } // if
       else if ( mErrorVct->at( i ).mErrorType == NOCLOSE ) {
         cout << "ERROR (no closing quote) : END-OF-LINE encountered at Line " <<
@@ -1416,7 +1413,7 @@ public:
          tokenString->mNext != NULL &&
          strcmp( tokenString->mNext->mToken, "exit" ) == 0 &&
          tokenString->mNext->mNext != NULL &&
-        tokenString->mNext->mNext->mTokenType == RIGHTPAREN ) {
+         tokenString->mNext->mNext->mTokenType == RIGHTPAREN ) {
       
       cout << endl ;
       return true ;
@@ -1489,7 +1486,7 @@ int main() {
       
     } // if
     else { // scanner has Error () )
-      scanner.PrintError( hasEof ) ;
+      scanner.PrintError() ;
     } // else
       
     
