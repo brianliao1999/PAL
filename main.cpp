@@ -353,7 +353,7 @@ public:
                     } // if
                     else {
                       // next Token has some errors
-                      
+                      hasError = true ;
                       DeleteTokenPtr( head ) ;
                       
                       return head ;
@@ -393,7 +393,7 @@ public:
               } // if
               else {
                 // next Token has some errors
-                
+                hasError = true ;
                 DeleteTokenPtr( head ) ;
                 
                 return head ;
@@ -406,7 +406,7 @@ public:
         } // if
         else {
           // next Token has some errors
-          
+          hasError = true ;
           DeleteTokenPtr( head ) ;
           
           return head ;
@@ -538,6 +538,7 @@ public:
           return true ;
         } // if
         else if ( hasError ) {
+          DeleteTokenPtr( mPeekedToken ) ;
           
           return false ;
         } // else if
@@ -784,15 +785,16 @@ public:
       
       TokenPtr temp ;
       bool noError = GetToken( temp ) ;
-      mPeekedToken = temp ;
-      temp = NULL ;
       
       if ( noError ) {
+        mPeekedToken = temp ;
         tokenType = mPeekedToken->mTokenType ;
-        
+        temp = NULL ;
+
         return true ;
       } // if
       else { // if ( hasError )
+        DeleteTokenPtr( temp ) ;
         
         return false ;
       } // else
@@ -888,6 +890,8 @@ public:
       
       mErrorVct->push_back( temp ) ;
       
+      string->clear() ;
+      string = NULL ;
       mLoadedLine->clear() ;
       mLine = 0 ;
       mColumn = 0 ;
