@@ -645,7 +645,7 @@ public:
             
           } // while
           
-          if ( temp->empty() ) { // mLoadedLine is empty
+          if ( temp->empty() ) { // mLoadedLine is empty 
             return GetToken( token ) ;
           } // if
           else { // temp isn't empty
@@ -1416,10 +1416,15 @@ public:
          tokenString->mNext != NULL &&
          strcmp( tokenString->mNext->mToken, "exit" ) == 0 &&
          tokenString->mNext->mNext != NULL &&
-         tokenString->mNext->mNext->mTokenType == RIGHTPAREN )
+        tokenString->mNext->mNext->mTokenType == RIGHTPAREN ) {
+      
+      cout << endl ;
       return true ;
-    else
+    } // if
+    else {
+      
       return false ;
+    } // else
         
   } // IsExit()
     
@@ -1451,53 +1456,50 @@ int main() {
   
   cout << fixed << setprecision( 3 ) ;
   
-  cout << "Welcome to OurScheme!" << endl << endl ;
+  cout << "Welcome to OurScheme!" << endl ;
   
   cin >> inputID ;
   
   while ( notEnd && ! hasEof && inputID == 1 ) {    // not exit && not EOF
-    cout <<  "> " ;
+    cout << endl << "> " ;
     
     if ( scanner.ReadSExp( sExpPtr ) ) {
       
       notEnd = ! parser.IsExit( sExpPtr->mTokenString ) ;
-      if ( parser.PlantCorrespondingTree( sExpPtr, correspondingTreePtr ) ) {
-        
-        if ( parser.Eval( sExpPtr ) ) {
+      if ( notEnd ) {
+        if ( parser.PlantCorrespondingTree( sExpPtr, correspondingTreePtr ) ) {
           
-          if ( notEnd ) {
+          if ( parser.Eval( sExpPtr ) ) {
             // parser.CheckTree( correspondingTreePtr ) ;
             int space = 0 ;
             int max = 0 ;
             parser.PrintCorrespondingTree( correspondingTreePtr, space, true ) ; // pretty print
+            
           } // if
+          else { // Eval() has Error
+            parser.PrintError() ;
+          } // else
           
         } // if
-        else { // Eval() has Error
-          parser.PrintError() ;
+        else { // if PlantCorrespondingTree() has Error
+          cout << "Has Error when planting tree." << endl ;
         } // else
         
       } // if
-      else { // if PlantCorrespondingTree() has Error
-        cout << "Has Error when planting tree." << endl ;
-      } // else
       
     } // if
     else { // scanner has Error () )
       scanner.PrintError( hasEof ) ;
     } // else
+      
     
     S_Expression::DeleteSExp( sExpPtr ) ;
     delete sExpPtr ;
     sExpPtr = NULL ;
     
-    cout << endl ;
-    
   } // while
   
-  cout << endl << "Thanks for using OurScheme!" ;
-
-  // printf( "\nThanks for using OurScheme!" ) ;
+  cout << "Thanks for using OurScheme!" ;
     
   return 0 ;
 } // main()
