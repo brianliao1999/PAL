@@ -77,26 +77,26 @@ public:
     mNext = NULL ;
   } // Token()
   
-static void DeleteTokenString( TokenPtr & head ) {
-  
-  if ( head == NULL ) {
-    return ;
-  } // if
-  else if ( head->mNext == NULL ) {
-    delete [] head->mToken ;
-    head->mToken = NULL ;
+  static void DeleteTokenString( TokenPtr & head ) {
     
-    return ;
-  } // else if
-  else {
-    DeleteTokenString( head->mNext ) ;
-    delete [] head->mToken ;
-    head->mToken = NULL ;
+    if ( head == NULL ) {
+      return ;
+    } // if
+    else if ( head->mNext == NULL ) {
+      delete [] head->mToken ;
+      head->mToken = NULL ;
+      
+      return ;
+    } // else if
+    else {
+      DeleteTokenString( head->mNext ) ;
+      delete [] head->mToken ;
+      head->mToken = NULL ;
+      
+      return ;
+    } // else
     
-    return ;
-  } // else
-  
-} // DeleteToken()
+  } // DeleteToken()
     
 } ; //  class Token
 
@@ -111,11 +111,11 @@ public:
     return ;
   } // S_Expression()
   
-static void DeleteSExp( SExpressionPtr & sExp  ) {
-  
-  sExp->mTokenString = NULL ;
-  
-} // DeleteSExp()
+  static void DeleteSExp( SExpressionPtr & sExp  ) {
+    
+    sExp->mTokenString = NULL ;
+    
+  } // DeleteSExp()
     
 } ; // class S_Expression
 
@@ -1050,19 +1050,19 @@ public:
     return ;
   } // PrintError()
   
-static bool IsAtom( TokenType tokenType ) {
-  if ( tokenType == SYMBOL || tokenType == INT ||
-       tokenType == FLOAT || tokenType == STRING ||
-       tokenType == NIL || tokenType == T ) {
-    
-    return true ;
-  } // if
-  else {
-    
-    return false ;
-  } // else
-    
-} // IsAtom()
+  static bool IsAtom( TokenType tokenType ) {
+    if ( tokenType == SYMBOL || tokenType == INT ||
+         tokenType == FLOAT || tokenType == STRING ||
+         tokenType == NIL || tokenType == T ) {
+      
+      return true ;
+    } // if
+    else {
+      
+      return false ;
+    } // else
+      
+  } // IsAtom()
     
 } ; // class Scanner
 
@@ -1104,6 +1104,7 @@ public:
       else {
         cout << walk->mToken ;
       } // else
+      
       cout << " " ;
       walk = walk->mNext ;
     } // while
@@ -1167,7 +1168,7 @@ public:
     
     if ( token->mTokenType == DOT ) {
       cout << "." << endl ;
-    } // else if
+    } // if
     else if ( token->mTokenType == QUOTE ) {
       cout << "quote" << endl ;
     } // else if
@@ -1180,7 +1181,7 @@ public:
     else if ( token->mTokenType == INT ) {
       cout << atoi( token->mToken ) << endl ;
     } // else if
-    else if ( token->mTokenType == FLOAT ) {\
+    else if ( token->mTokenType == FLOAT ) {
       cout << atof( token->mToken ) << endl ;
     } // else if
     else if ( token->mTokenType != NIL ) {
