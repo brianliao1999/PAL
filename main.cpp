@@ -1043,7 +1043,8 @@ public:
     
   void PrintError() {
     for ( int i = 0 ; i < mErrorVct->size() ; i++ ) {
-      if ( mErrorVct->at( i ).mErrorType == HASEOF && ( mLoadedLine->empty() || AllWhiteSpace( mLoadedLine ) ) ) {
+      if ( mErrorVct->at( i ).mErrorType == HASEOF &&
+           ( mLoadedLine->empty() || AllWhiteSpace( mLoadedLine ) ) ) {
         cout << "ERROR (no more input) : END-OF-FILE encountered" << endl ;
       } // if
       else if ( mErrorVct->at( i ).mErrorType == NOCLOSE ) {
