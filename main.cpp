@@ -224,7 +224,7 @@ public:
     int i = 0 ;
     
     for ( i = 0 ; i < len && ( string->at( i ) == ' ' ||
-                              string->at( i ) == '\t' || string->at( i ) == '\n' ) ; i++ ) {
+                               string->at( i ) == '\t' || string->at( i ) == '\n' ) ; i++ ) {
       ;
     } // for
     
@@ -1333,14 +1333,14 @@ public:
       else {
         TokenPtr tail = head ;
         
-        return GetSExpTree( head, tail, error ) ;
+        return GetSExpTree( head, tail, error, false ) ;
       } // else
       
     } // if
     else if ( head->mTokenType == QUOTE ) {
       TokenPtr tail = head ;
       
-      return GetSExpTree( head, tail, error ) ;
+      return GetSExpTree( head, tail, error, false ) ;
     } // else if
     else if ( Scanner::IsAtom( head->mTokenType ) ) {
       CorrespondingTreePtr temp = new CorrespondingTree ;
@@ -1356,7 +1356,7 @@ public:
     
   } // PlantTree()
   
-  CorrespondingTreePtr GetSExpTree( TokenPtr head, TokenPtr & tail, bool & error ) {
+  CorrespondingTreePtr GetSExpTree( TokenPtr head, TokenPtr & tail, bool & error, bool fromQuote ) {
     
     if ( head == NULL ) {
       return NULL ;
@@ -1365,12 +1365,12 @@ public:
       
       if ( head->mNext->mTokenType == RIGHTPAREN ) {
         tail = head->mNext->mNext ;
-        return Cons( GetSExpTree( head->mNext, tail, error ),  GetSExpTree( tail, tail, error ) ) ;
+        return Cons( GetSExpTree( head->mNext, tail, error, fromQuote ),  GetSExpTree( tail, tail, error, fromQuote ) ) ;
       } // if
       else { // if ( head->mNext->mTokenType != RIGHTPAREN )
-        CorrespondingTreePtr tempA = GetSExpTree( head->mNext, tail, error ) ;
+        CorrespondingTreePtr tempA = GetSExpTree( head->mNext, tail, error, fromQuote ) ;
         
-        CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error ) ;
+        CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error, fromQuote ) ;
               
         if ( tempB != NULL ) {
           
@@ -1388,7 +1388,7 @@ public:
       CorrespondingTreePtr temp = new CorrespondingTree ;
       temp->mToken = head ;
       
-      return Cons( temp, GetSExpTree( head->mNext, tail, error ) ) ;
+      return Cons( temp, GetSExpTree( head->mNext, tail, error, fromQuote ) ) ;
     } // else if
     else if ( head->mTokenType == QUOTE ) {
       CorrespondingTreePtr temp = new CorrespondingTree ;
@@ -1399,26 +1399,44 @@ public:
       nilTree->mToken = nil ;
       
       if ( head->mNext->mTokenType == LEFTPAREN ) {
+        
         CorrespondingTreePtr tempA = Cons( temp,
-                                           Cons( GetSExpTree( head->mNext->mNext, tail, error ),
+                                           Cons( GetSExpTree( head->mNext->mNext, tail, error, false ),
                                                  nilTree ) ) ;
-        CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error ) ;
-        if ( tempB != NULL ) {
+        if ( ! fromQuote ) {
+          CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error, false) ;
+          
+          if ( tempB != NULL ) {
+            
+            return Cons( tempA, tempB ) ;
+          } // if
+          else {
+            
+            return tempA ;
+          } // else
           
           return Cons( tempA, tempB ) ;
         } // if
         else {
           
           return tempA ;
-        } // else
+        } //else
         
       } // if
       else if ( head->mNext->mTokenType == QUOTE ) {
-        CorrespondingTreePtr tempA = Cons( temp, Cons( GetSExpTree( head->mNext, tail, error ), nilTree ) ) ;
-        CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error ) ;
-        if ( tempB != NULL ) {
+        CorrespondingTreePtr tempA = Cons( temp, Cons( GetSExpTree( head->mNext, tail, error, true ), nilTree ) ) ;
+        if ( ! fromQuote ) {
+          CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error, false ) ;
           
-          return Cons( tempA, tempB ) ;
+          if ( tempB != NULL ) {
+            
+            return Cons( tempA, tempB ) ;
+          } // if
+          else {
+            
+            return tempA ;
+          } // else
+          
         } // if
         else {
           
@@ -1430,15 +1448,22 @@ public:
         CorrespondingTreePtr atomTree = new CorrespondingTree ;
         atomTree->mToken = head->mNext ;
         tail = head->mNext->mNext ;
-        CorrespondingTreePtr tempA = Cons( temp, Cons( atomTree, nilTree ) ) ;
-        CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error ) ;
-        if ( tempB != NULL ) {
+        
+        if ( ! fromQuote ) {
+          CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error, false ) ;
+          if ( tempB != NULL ) {
+            
+            return Cons( Cons( temp, Cons( atomTree, nilTree ) ), tempB ) ;
+          } // if
+          else {
+            
+            return Cons( temp, Cons( atomTree, nilTree ) ) ;
+          } //else
           
-          return Cons( tempA, tempB ) ;
         } // if
         else {
           
-          return tempA ;
+          return Cons( temp, Cons( atomTree, nilTree ) ) ;
         } // else
         
       } // else
@@ -1447,7 +1472,7 @@ public:
     else if ( head->mTokenType == DOT ) {
       
       if ( head->mNext->mTokenType == LEFTPAREN ) {
-        CorrespondingTreePtr temp = GetSExpTree( head->mNext->mNext, tail, error ) ;
+        CorrespondingTreePtr temp = GetSExpTree( head->mNext->mNext, tail, error, fromQuote ) ;
         tail = tail->mNext ;
         
         return temp ;
@@ -1477,7 +1502,7 @@ public:
       
       tail = head->mNext ;
       
-      return temp ;
+      return temp ;// ( ''(45) 4 6 7 8 )
     } // else if
     else {
       cout << "here are some error I don't know." << endl ;
