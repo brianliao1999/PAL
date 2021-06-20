@@ -1365,7 +1365,8 @@ public:
       
       if ( head->mNext->mTokenType == RIGHTPAREN ) {
         tail = head->mNext->mNext ;
-        return Cons( GetSExpTree( head->mNext, tail, error, fromQuote ),  GetSExpTree( tail, tail, error, fromQuote ) ) ;
+        return Cons( GetSExpTree( head->mNext, tail, error, fromQuote ),
+                     GetSExpTree( tail, tail, error, fromQuote ) ) ;
       } // if
       else { // if ( head->mNext->mTokenType != RIGHTPAREN )
         CorrespondingTreePtr tempA = GetSExpTree( head->mNext, tail, error, fromQuote ) ;
@@ -1404,7 +1405,7 @@ public:
                                            Cons( GetSExpTree( head->mNext->mNext, tail, error, false ),
                                                  nilTree ) ) ;
         if ( ! fromQuote ) {
-          CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error, false) ;
+          CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error, false ) ;
           
           if ( tempB != NULL ) {
             
@@ -1420,11 +1421,13 @@ public:
         else {
           
           return tempA ;
-        } //else
+        } // else
         
       } // if
       else if ( head->mNext->mTokenType == QUOTE ) {
-        CorrespondingTreePtr tempA = Cons( temp, Cons( GetSExpTree( head->mNext, tail, error, true ), nilTree ) ) ;
+        CorrespondingTreePtr tempA = Cons( temp,
+                                           Cons( GetSExpTree( head->mNext, tail, error, true ),
+                                                 nilTree ) ) ;
         if ( ! fromQuote ) {
           CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error, false ) ;
           
@@ -1458,7 +1461,7 @@ public:
           else {
             
             return Cons( temp, Cons( atomTree, nilTree ) ) ;
-          } //else
+          } // else
           
         } // if
         else {
@@ -1502,7 +1505,7 @@ public:
       
       tail = head->mNext ;
       
-      return temp ;// ( ''(45) 4 6 7 8 )
+      return temp ;
     } // else if
     else {
       cout << "here are some error I don't know." << endl ;
