@@ -1575,7 +1575,7 @@ int main() {
   
   cin >> inputID ;
   
-  while ( notEnd && ! hasEof && inputID == 1 ) {    // not exit && not EOF
+  while ( notEnd && ! hasEof ) {    // not exit && not EOF
     cout << endl << "> " ;
     
     if ( scanner.ReadSExp( sExpPtr ) ) {
