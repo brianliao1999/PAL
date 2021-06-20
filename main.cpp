@@ -1168,7 +1168,7 @@ public:
         
         if ( head->mRightNode->mToken != NULL ) {
           if ( head->mRightNode->mToken->mTokenType != NIL ) {
-            PrintSpace( space ) ;//
+            PrintSpace( space ) ; 
             cout << "." << endl ;
             PrintSpace( space ) ;
             PrintToken( head->mRightNode->mToken ) ;
@@ -1298,11 +1298,27 @@ public:
   
   CorrespondingTreePtr PlantTree( TokenPtr head, bool & error ) {
     
-    if ( head->mTokenType == LEFTPAREN || head->mTokenType == QUOTE ) {
+    if ( head->mTokenType == LEFTPAREN ) {
+      if ( head->mNext->mTokenType == RIGHTPAREN ) {
+        CorrespondingTreePtr temp = new CorrespondingTree ;
+        TokenPtr nil = new Token ;
+        nil->mTokenType = NIL ;
+        temp->mToken = nil ;
+        
+        return temp ;
+      } // if
+      else {
+        TokenPtr tail = head ;
+        
+        return GetSExpTree( head, tail ) ;
+      } // else
+      
+    } // if
+    else if ( head->mTokenType == QUOTE ) {
       TokenPtr tail = head ;
       
       return GetSExpTree( head, tail ) ;
-    } // if
+    } // else if
     else if ( Scanner::IsAtom( head->mTokenType ) ) {
       CorrespondingTreePtr temp = new CorrespondingTree ;
       temp->mToken = head ;
