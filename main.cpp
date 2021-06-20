@@ -224,7 +224,9 @@ public:
     int i = 0 ;
     
     for ( i = 0 ; i < len && ( string->at( i ) == ' ' ||
-                               string->at( i ) == '\t' || string->at( i ) == '\n' ) ; i++ ) ;
+                              string->at( i ) == '\t' || string->at( i ) == '\n' ) ; i++ ) {
+      ;
+    } // for
     
     if ( i < len && string->at( i ) == ';' )
       return true ;
