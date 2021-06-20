@@ -1397,7 +1397,9 @@ public:
       nilTree->mToken = nil ;
       
       if ( head->mNext->mTokenType == LEFTPAREN ) {
-        CorrespondingTreePtr tempA = Cons( temp, Cons( GetSExpTree( head->mNext->mNext, tail, error ), nilTree ) ) ;
+        CorrespondingTreePtr tempA = Cons( temp,
+                                           Cons( GetSExpTree( head->mNext->mNext, tail, error ),
+                                                 nilTree ) ) ;
         CorrespondingTreePtr tempB = GetSExpTree( tail, tail, error ) ;
         if ( tempB != NULL ) {
           
