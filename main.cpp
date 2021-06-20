@@ -891,7 +891,6 @@ public:
       mErrorVct->push_back( temp ) ;
       
       string->clear() ;
-      string = NULL ;
       mLoadedLine->clear() ;
       mLine = 0 ;
       mColumn = 0 ;
@@ -1169,7 +1168,7 @@ public:
         
         if ( head->mRightNode->mToken != NULL ) {
           if ( head->mRightNode->mToken->mTokenType != NIL ) {
-            PrintSpace( space ) ;
+            PrintSpace( space ) ;//
             cout << "." << endl ;
             PrintSpace( space ) ;
             PrintToken( head->mRightNode->mToken ) ;
@@ -1299,33 +1298,11 @@ public:
   
   CorrespondingTreePtr PlantTree( TokenPtr head, bool & error ) {
     
-    if ( head->mTokenType == LEFTPAREN ) {
+    if ( head->mTokenType == LEFTPAREN || head->mTokenType == QUOTE ) {
+      TokenPtr tail = head ;
       
-      if ( head->mNext->mTokenType == RIGHTPAREN ) {
-        CorrespondingTreePtr temp = new CorrespondingTree ;
-        TokenPtr nil = new Token ;
-        nil->mTokenType = NIL ;
-        temp->mToken = nil ;
-        
-        return temp ;
-      } // if
-      else {
-        TokenPtr tail = head ;
-        
-        return GetSExpTree( head, tail ) ;
-      } // else
-      
+      return GetSExpTree( head, tail ) ;
     } // if
-    else if ( head->mTokenType == QUOTE ) {
-      CorrespondingTreePtr temp = new CorrespondingTree ;
-      temp->mLeftNode = new CorrespondingTree ;
-      temp->mLeftNode->mToken = head ;
-      TokenPtr tail = head->mNext ;
-      
-      temp->mRightNode = GetSExpTree( head->mNext, tail ) ;
-      
-      return temp ;
-    } // else if
     else if ( Scanner::IsAtom( head->mTokenType ) ) {
       CorrespondingTreePtr temp = new CorrespondingTree ;
       temp->mToken = head ;
@@ -1373,6 +1350,16 @@ public:
       temp->mToken = head ;
       
       return Cons( temp, GetSExpTree( head->mNext, tail ) ) ;
+    } // else if
+    else if ( head->mTokenType == QUOTE ) {
+      CorrespondingTreePtr temp = new CorrespondingTree ;
+      temp->mToken = head ;
+      CorrespondingTreePtr nilTree = new CorrespondingTree ;
+      TokenPtr nil = new Token ;
+      nil->mTokenType = NIL ;
+      nilTree->mToken = nil ;
+      
+      return Cons( temp,  Cons( GetSExpTree( head->mNext, tail ), nilTree ) ) ;
     } // else if
     else if ( head->mTokenType == DOT ) {
       
